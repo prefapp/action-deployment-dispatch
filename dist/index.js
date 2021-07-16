@@ -7725,6 +7725,8 @@ async function run(){
   core.info("Latest prerelease " + info)
 
   info = await ImagesCalculator("branch_main", ctx)
+
+  info = await ImagesCalculator("branch_branch2", ctx)
 }
 
 run()
