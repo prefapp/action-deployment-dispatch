@@ -7424,7 +7424,7 @@ module.exports = function(action_type, ctx){
 
   function __last_prerelease(octokit, ctx){
 
-    return ocktokit.rest.getLatestRelease({
+    return octokit.rest.getLatestRelease({
     
       owner: "",
 
