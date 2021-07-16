@@ -7426,9 +7426,9 @@ module.exports = function(action_type, ctx){
 
     return octokit.rest.repos.getLatestRelease({
     
-      owner: github.context.repo.owner,
+      owner: ctx.owner,
 
-      repo: github.context.payload.repository.full_name
+      repo: ctx.repo
 
     }).then((r) => {
     
@@ -7656,6 +7656,10 @@ async function run(){
     state_repo: core.getInput('state_repo'),
   
     image_repository: core.getInput('image_repository'),
+
+    owner: github.context.payload.repository.owner.login,
+
+    repo: github.context.payload.repository.name,
   
   }
 
