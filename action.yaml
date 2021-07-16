@@ -3,37 +3,9 @@ description: >
   Using state repo structure it updates an image value and the creates 
   a pull request in the same state repo
 inputs:
-  application:
-    description: 'Application to read from config.yaml'
+  state_repo:
+    description: "Name of the state repo to dispatch to"
     required: true
-    default: ''
-  environment:
-    description: 'Environment to select from config.yaml'
-    required: true
-    default: ''
-  services:
-    description: 'Comma separeted list of services'
-    required: true
-    default: ''
-  image:
-    description: 'New image value'
-    required: true
-    default: ''
-  reviewers:
-    description: 'Reviewers of the new PR'
-    required: false
-    default: ''
-  pr_title:
-    description: 'The title of the PR'
-    required: false
-    default: ''
-  pr_body:
-    description: 'Body of the PR'
-    required: false
-    default: ''
-  branch_name:
-    description: 'Name of the new branch used to pull request'
-    required: false
     default: ''
   token:
     description: >
