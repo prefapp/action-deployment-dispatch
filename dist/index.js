@@ -7401,6 +7401,46 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 6638:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(2186)
+const github = __nccwpck_require__(5438)
+
+module.exports = function(action_type, ctx){
+
+  const octokit = github.getOctokit(ctx.github_token)
+
+  core.info(action_type)
+
+  switch(action_type){
+
+    case "last_prerelease":
+      return __last_prerelease(octokit, ctx)
+
+  }
+}
+
+
+  function __last_prerelease(octokit, ctx){
+
+    return ocktokit.rest.getLatestRelease({
+    
+      owner: "",
+
+      repo: ""
+
+    }).then((r) => {
+    
+      console.log(r)
+
+    })
+    
+  }
+
+
+/***/ }),
+
 /***/ 2877:
 /***/ ((module) => {
 
@@ -7580,23 +7620,50 @@ const core = __nccwpck_require__(2186);
 const exec = __nccwpck_require__(1514);
 const github = __nccwpck_require__(5438);
 
+const ImagesCalculator = __nccwpck_require__(6638)
+
+async function calculateImage(action_type, ctx){
+
+  switch(action_type){
+
+    case "last_prerelease": 
+
+    case "last_release":
+
+    default: 
+
+      if(action_type.match(/^branch_/)){
+
+      }
+      else{
+
+        return action_type
+      }
+
+  }
+    
+
+}
+
 async function run(){
 
   const ctx = {
-   
+
+    github_token: core.getInput("github_token"),
+
     token: core.getInput('token'),
    
     state_repo: core.getInput('state_repo'),
-   
-    eventType: core.getInput('event-type'),
-   
-    clientPayload: core.getInput('client-payload')
+  
+    image_repository: core.getInput('image_repository'),
   
   }
 
   core.info("Loading")
+  
   core.info(`Repo ${ctx.state_repo}`)
   
+  ImagesCalculator("last_prerelease", ctx)
 }
 
 run()
