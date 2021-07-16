@@ -7426,9 +7426,9 @@ module.exports = function(action_type, ctx){
 
     return octokit.rest.repos.getLatestRelease({
     
-      owner: "",
+      owner: github.context.repo.owner,
 
-      repo: ""
+      repo: github.context.payload.repository.fullName
 
     }).then((r) => {
     
