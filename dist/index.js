@@ -7471,6 +7471,21 @@ module.exports = function(action_type, ctx){
 
   function __last_branch_commit(branch, octokit, ctx){
 
+    return octokit.getBranch({
+    
+      owner: ctx.owner,
+
+      repo: ctx.repo,
+
+      branch: branch.replace(/^branch_/, "")
+    
+    }).then((b) => {
+    
+
+      core.info(JSON.stringify(b, null, 4))
+    
+    })
+
   }
 
 
@@ -7710,6 +7725,7 @@ async function run(){
 
   core.info("Latest prerelease " + info)
 
+  info = await ImagesCalculator("branch_main", ctx)
 }
 
 run()
