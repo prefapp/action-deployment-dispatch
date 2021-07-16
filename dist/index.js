@@ -7594,6 +7594,8 @@ async function run(){
   
   }
 
+  core.info("Loading")
+  core.info(`Repo ${ctx.state_repo}`)
   
 }
 
