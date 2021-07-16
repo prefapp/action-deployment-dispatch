@@ -31,7 +31,7 @@ module.exports = class {
   //
   async dispatch(){
 
-    for( const deploymentEvent of this.__packEvents()){
+    for( const deploymentEvent of await this.__packEvents()){
 
       await this.__dispatchEvent(deploymentEvent)
 
@@ -54,14 +54,14 @@ module.exports = class {
 
   }
 
-  __preparePayload(action){
+  async __preparePayload(action){
 
     return {
 
       ...action,
 
       // We need to extract the image tag according to the type (main, label, pre_release...)
-      image: this.ctx.images(action.type)
+      image: await this.ctx.images(action.type)
 
     }
 
