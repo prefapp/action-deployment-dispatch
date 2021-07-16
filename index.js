@@ -8,7 +8,7 @@ async function run(){
    
     token: core.getInput('token'),
    
-    repository: core.getInput('repository'),
+    state_repo: core.getInput('state_repo'),
    
     eventType: core.getInput('event-type'),
    

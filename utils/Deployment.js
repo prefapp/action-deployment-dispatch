@@ -2,7 +2,7 @@ const jsYaml = require("js-yaml")
 
 const fs = require("fs")
 
-const DYNAMIC_VERSIONS = ["main", "pre_release", "release", "label"]
+const DYNAMIC_VERSIONS = ["last_prerelease", "last_release"]
 
 module.exports = class {
   

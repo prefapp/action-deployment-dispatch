@@ -2,10 +2,10 @@ tenant1:
   release_foo:
     dev:
       service: hello
-      version: main
+      version: branch_main
     pre:
       service: hello
-      version: pre_release
+      version: last_prerelease
     pro:
       service: hello
       version: 1.0.1
