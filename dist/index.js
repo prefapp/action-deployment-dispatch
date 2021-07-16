@@ -7450,7 +7450,7 @@ module.exports = function(action_type, ctx){
 
     }).then((rr) => {
  
-      return rr.filter(r => r.data.prerelease)[0]
+      return rr.data.filter(r => r.data.prerelease)[0]
 
     }).then((r) => {
     
