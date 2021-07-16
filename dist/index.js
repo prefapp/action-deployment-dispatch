@@ -7442,7 +7442,7 @@ module.exports = function(action_type, ctx){
 
   function __last_prerelease(octokit, ctx){
 
-    return octokit.rest.repos.getLatestRelease({
+    return octokit.rest.repos.listReleases({
     
       owner: ctx.owner,
 
