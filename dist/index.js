@@ -7418,7 +7418,7 @@ module.exports = function(action_type, ctx){
     case "last_prerelease":
       return __last_prerelease(octokit, ctx)
     case "last_release":
-      return __last_release(octokit, ct)
+      return __last_release(octokit, ctx)
 
   }
 }
