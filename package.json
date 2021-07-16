@@ -1,0 +1,28 @@
+{
+  "name": "action-deployment-dispatch",
+  "version": "1.0.0",
+  "description": "A github action for deployments dispatch to a gitops repo",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jeset"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prefapp/action-deployment-dispatch.git"
+  },
+  "keywords": [
+    "Github",
+    "Actions",
+    "Prefapp",
+    "Gitops"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/prefapp/action-deployment-dispatch/issues"
+  },
+  "homepage": "https://github.com/prefapp/action-deployment-dispatch#readme"
+}
