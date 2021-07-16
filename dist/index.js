@@ -7428,7 +7428,7 @@ module.exports = function(action_type, ctx){
     
       owner: github.context.repo.owner,
 
-      repo: github.context.payload.repository.fullName
+      repo: github.context.payload.repository.full_name
 
     }).then((r) => {
     
