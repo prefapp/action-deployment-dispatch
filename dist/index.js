@@ -7450,7 +7450,7 @@ module.exports = function(action_type, ctx){
 
     }).then((rr) => {
  
-      core.info(rr)
+      core.info(JSON.stringify(rr, null, 4))
 
       return rr.filter(r => r.data.prerelease)[0]
 
