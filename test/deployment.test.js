@@ -28,7 +28,7 @@ test("Deployment analyzes and retrieves correctly the dispatches", () => {
 
   const deployment = new Deployment(deployment_data).init()
 
-  expect(deployment.parse("pre_release")).toMatchObject([
+  expect(deployment.parse("last_prerelease")).toMatchObject([
   
     {
       tenant: "tenant1",
@@ -42,7 +42,7 @@ test("Deployment analyzes and retrieves correctly the dispatches", () => {
   
   ])
 
-  expect(deployment.parse("release")).toMatchObject([
+  expect(deployment.parse("last_release")).toMatchObject([
   
     {
       tenant: "tenant1",
@@ -91,22 +91,25 @@ test("Deployment is able to make a diff with another deployment", function(){
       },
     
     ],
-
-    "main": [
-     
-       {
-         tenant: "tenant2",
-
-         app: "release_foo2",
-
-         env: "dev",
-
-         service: "hello"
-        
-       }
-     
-     ]
     
+  })
+
+  expect(deployment_a.diff(deployment_b)).toMatchObject({
+  
+    "1.0.1" : [
+    
+      {
+        tenant: "tenant1",
+
+        app: "release_foo",
+
+        env: "pro",
+
+        service: "hello"
+      },
+    
+    ],
+
   })
 
 })
