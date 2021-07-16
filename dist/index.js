@@ -7481,9 +7481,8 @@ module.exports = function(action_type, ctx){
     
     }).then((b) => {
     
+      return b.data.commit.sha
 
-      core.info(JSON.stringify(b, null, 4))
-    
     })
 
   }
