@@ -1,0 +1,11 @@
+tenant1:
+  release_foo:
+    dev:
+      service: hello
+      version: main
+    pre:
+      service: hello
+      version: pre_release
+    pro:
+      service: hello
+      version: 2.3.1
