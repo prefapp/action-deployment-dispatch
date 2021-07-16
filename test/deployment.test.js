@@ -109,4 +109,22 @@ test("Deployment is able to make a diff with another deployment", function(){
     
   })
 
+  expect(deployment_a.diff(deployment_b)).toMatchObject({
+  
+    "1.0.1" : [
+    
+      {
+        tenant: "tenant1",
+
+        app: "release_foo",
+
+        env: "pro",
+
+        service: "hello"
+      },
+    
+    ],
+
+  })
+
 })
