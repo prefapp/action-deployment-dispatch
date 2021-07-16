@@ -7726,7 +7726,11 @@ async function run(){
 
   info = await ImagesCalculator("branch_main", ctx)
 
+  core.info("commit " + info)
+
   info = await ImagesCalculator("branch_branch2", ctx)
+
+  core.info("commit " + info)
 }
 
 run()
