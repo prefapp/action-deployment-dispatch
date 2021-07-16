@@ -88,10 +88,25 @@ test("Deployment is able to make a diff with another deployment", function(){
         env: "pro",
 
         service: "hello"
-      }
+      },
     
-    ]
-  
+    ],
+
+    "main": [
+     
+       {
+         tenant: "tenant2",
+
+         app: "release_foo2",
+
+         env: "dev",
+
+         service: "hello"
+        
+       }
+     
+     ]
+    
   })
 
 })
