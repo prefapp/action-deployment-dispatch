@@ -28,6 +28,9 @@ module.exports = class {
     return this
   }
 
+  //
+  // Get all the actions of the type 'action' (release, pre_release...) for dispatching
+  //
   parse(action){
 
     // if the action is not listed (i.e. that type doesn't exist in deployment.yaml) we return an empty list
@@ -108,7 +111,7 @@ module.exports = class {
   __loadData(){
 
     //
-    // We organize an object sorted by type of versions
+    // We organize an object sorted by type of actions
     //
     let actions = {}
 
