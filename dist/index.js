@@ -7471,7 +7471,7 @@ module.exports = function(action_type, ctx){
 
   function __last_branch_commit(branch, octokit, ctx){
 
-    return octokit.getBranch({
+    return octokit.rest.repos.getBranch({
     
       owner: ctx.owner,
 
