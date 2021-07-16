@@ -7431,8 +7431,8 @@ module.exports = function(action_type, ctx){
       repo: ctx.repo
 
     }).then((r) => {
-    
-      console.log(r)
+ 
+      return r.data.tag_name
 
     })
     
@@ -7667,7 +7667,11 @@ async function run(){
   
   core.info(`Repo ${ctx.state_repo}`)
   
-  ImagesCalculator("last_prerelease", ctx)
+  let info = await ImagesCalculator("last_prerelease", ctx)
+
+  core.info("Latest release " + info)
+
+
 }
 
 run()
