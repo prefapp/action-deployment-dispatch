@@ -7417,12 +7417,14 @@ module.exports = function(action_type, ctx){
 
     case "last_prerelease":
       return __last_prerelease(octokit, ctx)
+    case "last_release":
+      return __last_release(octokit, ct)
 
   }
 }
 
 
-  function __last_prerelease(octokit, ctx){
+  function __last_release(octokit, ctx){
 
     return octokit.rest.repos.getLatestRelease({
     
@@ -7434,6 +7436,27 @@ module.exports = function(action_type, ctx){
  
       return r.data.tag_name
 
+    })
+    
+  }
+
+  function __last_prerelease(octokit, ctx){
+
+    return octokit.rest.repos.getLatestRelease({
+    
+      owner: ctx.owner,
+
+      repo: ctx.repo
+
+    }).then((rr) => {
+ 
+      return rr.filter(r => r.data.prerelease)[0]
+
+    }).then((r) => {
+    
+      if( r ) return r.data.tag_name
+
+      return null
     })
     
   }
@@ -7667,10 +7690,13 @@ async function run(){
   
   core.info(`Repo ${ctx.state_repo}`)
   
-  let info = await ImagesCalculator("last_prerelease", ctx)
+  let info = await ImagesCalculator("last_release", ctx)
 
   core.info("Latest release " + info)
 
+  info = await ImagesCalculator("last_prerelease", ctx)
+
+  core.info("Latest prerelease " + info)
 
 }
 
