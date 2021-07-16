@@ -7419,7 +7419,15 @@ module.exports = function(action_type, ctx){
       return __last_prerelease(octokit, ctx)
     case "last_release":
       return __last_release(octokit, ctx)
+    default:
+      if(action_type.match(/^branch_/)){
 
+        return __last_branch_commit(action_type, octokit, ctx)
+      }
+      else{
+
+        return action_type
+      }
   }
 }
 
@@ -7450,15 +7458,19 @@ module.exports = function(action_type, ctx){
 
     }).then((rr) => {
  
-      return rr.data.filter(r => r.data.prerelease)[0]
+      return rr.data.filter(r => r.prerelease)[0]
 
     }).then((r) => {
     
-      if( r ) return r.data.tag_name
+      if( r ) return r.tag_name
 
       return null
     })
     
+  }
+
+  function __last_branch_commit(branch, octokit, ctx){
+
   }
 
 
