@@ -1,0 +1,43 @@
+{
+  "name": "action-deployment-dispatch",
+  "version": "1.0.0",
+  "description": "A github action for deployments dispatch to a gitops repo",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+		"lint": "eslint .",
+    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
+    "test": "jest",
+    "all": "npm run lint && npm run prepare && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prefapp/action-deployment-dispatch.git"
+  },
+  "keywords": [
+    "Github",
+    "Actions",
+    "Prefapp",
+    "Gitops"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/prefapp/action-deployment-dispatch/issues"
+  },
+  "homepage": "https://github.com/prefapp/action-deployment-dispatch#readme",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "@actions/exec": "^1.1.0",
+    "js-yaml": "^4.1.0",
+    "sha1": "^1.1.1"
+  },
+  "devDependencies": {
+    "@actions/github": "^5.0.0",
+    "@vercel/ncc": "^0.28.6",
+    "eslint": "^7.30.0",
+    "jest": "^27.0.6"
+  }
+}
