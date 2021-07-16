@@ -7450,6 +7450,8 @@ module.exports = function(action_type, ctx){
 
     }).then((rr) => {
  
+      core.info(rr)
+
       return rr.filter(r => r.data.prerelease)[0]
 
     }).then((r) => {
