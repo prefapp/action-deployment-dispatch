@@ -7434,7 +7434,7 @@ module.exports = class {
 
     }).then((data) => {
     
-      core.info(JSON.stringify(data))
+      core.info(JSON.stringify(data, null, 4))
     
     })
     
