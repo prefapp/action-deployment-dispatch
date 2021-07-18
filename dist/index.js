@@ -7432,9 +7432,11 @@ module.exports = class {
 
       pull_number: this.ctx.pull_request
 
-    }).then((data) => {
-    
-      core.info(JSON.stringify(data, null, 4))
+    }).then((r) => {
+ 
+      return r.data
+
+        .filter(change => change.filename == this.ctx.deployment_file).length > 0
     
     })
     
@@ -7733,7 +7735,9 @@ async function run(){
 
     repo: github.context.payload.repository.name,
 
-    pull_request: core.getInput("pull_request")
+    pull_request: core.getInput("pull_request"),
+
+    deployment_file: core.getInput("deployment_file")
   
   }
 
@@ -7757,7 +7761,11 @@ async function run(){
 
   core.info("commit " + info)
 
-  new GitControl({ctx}).deploymentHasChanges()
+  const changes = await new GitControl({ctx}).deploymentHasChanges()
+
+  if( changes )
+    core.info("The file of deployments has changed!!")
+
 }
 
 run()
