@@ -7401,6 +7401,50 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 1997:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(2186)
+const github = __nccwpck_require__(5438)
+
+module.exports = class {
+
+  constructor({ctx}){
+
+    this.octokit = github.getOctokit(ctx.github_token)
+
+    this.ctx = ctx
+  }
+
+  deploymentHasChanges(){
+
+    //
+    // Deployments.yaml can only be change through a PR
+    //
+    if( !ctx.pull_request )
+      return false
+
+    return this.octokit.rest.pulls.listFiles({
+    
+      owner: this.ctx.owner,
+
+      repo: this.ctx.repo,
+
+      pull_number: this.ctx.pull_request
+
+    }).then((data) => {
+    
+      core.info(JSON.stringify(data))
+    
+    })
+    
+  }
+
+}
+
+
+/***/ }),
+
 /***/ 6638:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -7410,8 +7454,6 @@ const github = __nccwpck_require__(5438)
 module.exports = function(action_type, ctx){
 
   const octokit = github.getOctokit(ctx.github_token)
-
-  core.info(action_type)
 
   switch(action_type){
 
@@ -7481,7 +7523,10 @@ module.exports = function(action_type, ctx){
     
     }).then((b) => {
     
-      return b.data.commit.sha
+      //
+      // we only use the first 8 chars of the commit's SHA for tagging
+      //
+      return b.data.commit.sha.substring(0, 8) 
 
     })
 
@@ -7670,29 +7715,7 @@ const exec = __nccwpck_require__(1514);
 const github = __nccwpck_require__(5438);
 
 const ImagesCalculator = __nccwpck_require__(6638)
-
-async function calculateImage(action_type, ctx){
-
-  switch(action_type){
-
-    case "last_prerelease": 
-
-    case "last_release":
-
-    default: 
-
-      if(action_type.match(/^branch_/)){
-
-      }
-      else{
-
-        return action_type
-      }
-
-  }
-    
-
-}
+const GitControl = __nccwpck_require__(1997)
 
 async function run(){
 
@@ -7709,6 +7732,8 @@ async function run(){
     owner: github.context.payload.repository.owner.login,
 
     repo: github.context.payload.repository.name,
+
+    pull_request: core.getInput("pull_request")
   
   }
 
@@ -7731,6 +7756,8 @@ async function run(){
   info = await ImagesCalculator("branch_branch2", ctx)
 
   core.info("commit " + info)
+
+  new GitControl({ctx}).deploymentHasChanges()
 }
 
 run()
