@@ -7421,7 +7421,7 @@ module.exports = class {
     //
     // Deployments.yaml can only be change through a PR
     //
-    if( !ctx.pull_request )
+    if( !this.ctx.pull_request )
       return false
 
     return this.octokit.rest.pulls.listFiles({
