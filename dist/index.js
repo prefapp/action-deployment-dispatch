@@ -7434,6 +7434,10 @@ module.exports = class {
 
     }).then((r) => {
  
+      core.info(r)
+
+      core.info(this.ctx.deployment_file)
+
       return r.data
 
         .filter(change => change.filename == this.ctx.deployment_file).length > 0
