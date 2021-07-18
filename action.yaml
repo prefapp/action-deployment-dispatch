@@ -24,6 +24,9 @@ inputs:
   github_token:
     description: "The github token"
     default: ${{ github.token }}
+  pull_request:
+    description: "The pull request to use (optional)"
+    default: ""
 
 runs:
   using: 'node12'
