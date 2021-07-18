@@ -7765,7 +7765,8 @@ async function run(){
 
   if( changes )
     core.info("The file of deployments has changed!!")
-
+  else
+    core.info("The file of deployments has not changed")
 }
 
 run()
