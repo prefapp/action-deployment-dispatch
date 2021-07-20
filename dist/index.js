@@ -12044,7 +12044,7 @@ async function run(){
   //
   // We process the normal event
   //
-  return __processEvent(ctx)
+  return processEvent(ctx)
 
   //core.info("Loading")
   //
