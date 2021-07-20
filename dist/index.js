@@ -12022,9 +12022,7 @@ async function run(){
 
     deployment_file: core.getInput("deployment_file"),
 
-    triggered_event: core.getInput("triggered_event"),
-
-    triggered_type_event: core.getInput("triggered_type_event")
+    triggered_event: github.context.eventName
   
   }
 
