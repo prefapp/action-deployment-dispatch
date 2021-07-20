@@ -6,6 +6,8 @@ const Deployment = require("./utils/Deployment.js")
 const ImagesCalculator = require("./utils/ImagesCalculator.js")
 const GitControl = require("./utils/GitControl.js")
 
+const Dispatcher = require("./utils/Dispatcher.js")
+
 const fs = require("fs")
 
 async function run(){
@@ -31,7 +33,13 @@ async function run(){
 
     deployment_file: core.getInput("deployment_file"),
 
-    triggered_event: github.context.eventName
+    triggered_event: github.context.eventName,
+
+    images: (type) => {
+
+      return ImagesCalculator(type, ctx)
+
+    }
   
   }
 
@@ -98,10 +106,22 @@ async function run(){
     switch(ctx.triggered_event){
 
       case "release":
-        if( github.context.payload.release.prerelease )
+
+        if( github.context.payload.release.prerelease ){
+        
           changes = deployment.parse("last_prerelease")
-        else
+        
+          changes.forEach(ch => ch.type = "last_prerelease")
+
+        }
+        else{
+
           changes = deployment.parse("last_release")
+
+          changes.forEach(ch => ch.type = "last_prerelease")
+
+        }
+
         break
 
       default: 
@@ -113,6 +133,8 @@ async function run(){
     }
 
     core.info(JSON.stringify(changes, null, 4))
+
+    new Dispatcher({actions: changes, ctx}).dispatch()
 
   }
 
