@@ -12095,7 +12095,7 @@ async function run(){
     switch(ctx.triggered_event){
 
       case "release":
-        if( github.payload.release.prerelease )
+        if( github.context.payload.release.prerelease )
           changes = deployment.parse("last_prerelease")
         else
           changes = deployment.parse("last_release")
