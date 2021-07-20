@@ -12090,11 +12090,11 @@ async function run(){
 
     switch(ctx.triggered_event){
 
-      case "prereleased":
+      case "prerelease":
         changes = deployment.parse("last_prerelease")
         break
 
-      case "released":
+      case "release":
         changes = deployment.parse("last_release")
         break
 
