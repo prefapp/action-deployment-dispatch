@@ -11712,27 +11712,13 @@ module.exports = class {
   //
   async dispatch(){
 
-    for( const deploymentEvent of await this.__packEvents()){
+    for( const action of await this.actions){
+
+      const deploymentEvent = await this.__preparePayload(action)
 
       await this.__dispatchEvent(deploymentEvent)
 
     }
-  }
-
-  //
-  // It takes the actions, groups them (on packs) and send them as an event
-  //
-  __packEvents(){
-
-    //
-    // we send actions  (for now)
-    //
-    return this.actions.map((action) => {
-    
-      return this.__preparePayload(action)
-    
-    })
-
   }
 
   async __preparePayload(action){
