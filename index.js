@@ -35,10 +35,6 @@ async function run(){
   
   }
 
-  core.info(JSON.stringify(ctx, null, 4))
-
-  core.info(JSON.stringify(github.context, null, 4))
-
   //
   // we check if there were changes on the deployments file. 
   // If that is the case, we dispatch ALL its content
