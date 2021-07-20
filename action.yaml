@@ -27,9 +27,6 @@ inputs:
   pull_request:
     description: "The pull request to use (optional)"
     default: ""
-  triggered_event:
-    description: "The event that triggered the workflow"
-    default: ${{ github.event_name }}
 runs:
   using: 'node12'
   main: 'dist/index.js'

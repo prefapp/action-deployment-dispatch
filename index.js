@@ -31,9 +31,7 @@ async function run(){
 
     deployment_file: core.getInput("deployment_file"),
 
-    triggered_event: core.getInput("triggered_event"),
-
-    triggered_type_event: core.getInput("triggered_type_event")
+    triggered_event: github.context.eventName
   
   }
 
@@ -104,7 +102,7 @@ async function run(){
     switch(ctx.triggered_event){
 
       case "release":
-        if( github.payload.release.prerelease )
+        if( github.context.payload.release.prerelease )
           changes = deployment.parse("last_prerelease")
         else
           changes = deployment.parse("last_release")
