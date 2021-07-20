@@ -12008,7 +12008,7 @@ async function run(){
 
     github_token: core.getInput("github_token"),
 
-   token: core.getInput('token'),
+    token: core.getInput('token'),
    
     state_repo: core.getInput('state_repo'),
   
@@ -12025,6 +12025,8 @@ async function run(){
     triggered_event: core.getInput("event_name"),
   
   }
+
+  core.info(JSON.stringify(ctx, null, 4))
 
   //
   // we check if there were changes on the deployments file. 
