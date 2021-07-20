@@ -23,6 +23,7 @@ module.exports = class {
       new DispatcherMock({test, ctx}) :
 
       new DispatcherGithub({ctx})
+
   }
 
 
@@ -31,37 +32,26 @@ module.exports = class {
   //
   async dispatch(){
 
-    for( const deploymentEvent of await this.__packEvents()){
+    for( const action of await this.actions){
+
+      const deploymentEvent = await this.__preparePayload(action)
 
       await this.__dispatchEvent(deploymentEvent)
 
     }
   }
 
-  //
-  // It takes the actions, groups them (on packs) and send them as an event
-  //
-  __packEvents(){
-
-    //
-    // we send actions  (for now)
-    //
-    return this.actions.map((action) => {
-    
-      return this.__preparePayload(action)
-    
-    })
-
-  }
-
   async __preparePayload(action){
+
+    // We need to extract the image tag according to the type (main, label, pre_release...)
+    // this function is a helper that really is calling ImageCalculator
+    const image = await this.ctx.images(action.type)
 
     return {
 
       ...action,
 
-      // We need to extract the image tag according to the type (main, label, pre_release...)
-      image: await this.ctx.images(action.type)
+      image: `${this.ctx.image_repository}:${image}`
 
     }
 
@@ -93,7 +83,7 @@ class DispatcherGithub{
       
         owner: this.ctx.owner,
 
-        repo: this.ctx.repo,
+        repo: this.ctx.state_repo,
 
         event_type: EVENT_TYPE,
  
