@@ -112,10 +112,10 @@ async function run(){
         if( ctx.triggered_event == "pull_request")
           changes = ""
 
-      core.info(JSON.stringify(changes, null, 4))
         
     }
 
+    core.info(JSON.stringify(changes, null, 4))
 
   }
 
