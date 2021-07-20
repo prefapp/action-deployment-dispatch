@@ -30,9 +30,6 @@ inputs:
   triggered_event:
     description: "The event that triggered the workflow"
     default: ${{ github.event_name }}
-  triggered_type_event:
-    description: "The event that triggered the workflow"
-    default: ${{ github.event_type }}
 runs:
   using: 'node12'
   main: 'dist/index.js'
