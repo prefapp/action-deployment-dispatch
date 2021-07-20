@@ -11703,7 +11703,6 @@ module.exports = class {
 
       new DispatcherGithub({ctx})
 
-    core.info(JSON.stringify(this, null, 4))
   }
 
 
@@ -11723,12 +11722,15 @@ module.exports = class {
 
   async __preparePayload(action){
 
+    // We need to extract the image tag according to the type (main, label, pre_release...)
+    // this function is a helper that really is calling ImageCalculator
+    const image = await this.ctx.images(action.type)
+
     return {
 
       ...action,
 
-      // We need to extract the image tag according to the type (main, label, pre_release...)
-      image: await this.ctx.images(action.type)
+      image: `${ctx.image_repository}:${image}`
 
     }
 
