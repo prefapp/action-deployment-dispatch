@@ -85,21 +85,33 @@ class DispatcherGithub{
 
   }
 
-  aysnc dispatch(eventPayload){
+  async dispatch(eventPayload){
 
     try {
 
-      await this.octokit.rest.repos.createDispatchEvent({
+      core.info(JSON.stringify({
       
         owner: this.ctx.owner,
 
         repo: this.ctx.repo,
 
-        event_type: EVENT_TYPE
+        event_type: EVENT_TYPE,
  
         client_payload: eventPayload
+      
+      }, null, 4))
 
-      })
+      //await this.octokit.rest.repos.createDispatchEvent({
+      //
+      //  owner: this.ctx.owner,
+
+      //  repo: this.ctx.repo,
+
+      //  event_type: EVENT_TYPE
+ 
+      //  client_payload: eventPayload
+
+      //})
   
     }
     catch(error){
