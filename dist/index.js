@@ -11760,7 +11760,7 @@ class DispatcherGithub{
 
     this.ctx = ctx
 
-    this.octokit = github.getOctokit(ctx.inputs.token)
+    this.octokit = github.getOctokit(ctx.token)
 
   }
 
