@@ -39,6 +39,8 @@ async function run(){
 
   core.info(JSON.stringify(ctx, null, 4))
 
+  core.info(JSON.stringify(github.context, null, 4))
+
   //
   // we check if there were changes on the deployments file. 
   // If that is the case, we dispatch ALL its content
@@ -101,12 +103,11 @@ async function run(){
 
     switch(ctx.triggered_event){
 
-      case "prerelease":
-        changes = deployment.parse("last_prerelease")
-        break
-
       case "release":
-        changes = deployment.parse("last_release")
+        if( github.payload.release.prerelease )
+          changes = deployment.parse("last_prerelease")
+        else
+          changes = deployment.parse("last_release")
         break
 
       default: 
