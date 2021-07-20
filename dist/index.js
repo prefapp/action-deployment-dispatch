@@ -11730,7 +11730,7 @@ module.exports = class {
 
       ...action,
 
-      image: `${ctx.image_repository}:${image}`
+      image: `${this.ctx.image_repository}:${image}`
 
     }
 
