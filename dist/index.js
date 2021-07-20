@@ -11702,6 +11702,8 @@ module.exports = class {
       new DispatcherMock({test, ctx}) :
 
       new DispatcherGithub({ctx})
+
+    core.info(JSON.stringify(this, null, 4))
   }
 
 
@@ -11772,7 +11774,7 @@ class DispatcherGithub{
       
         owner: this.ctx.owner,
 
-        repo: this.ctx.repo,
+        repo: this.ctx.state_repo,
 
         event_type: EVENT_TYPE,
  
