@@ -12094,12 +12094,11 @@ async function run(){
 
     switch(ctx.triggered_event){
 
-      case "prerelease":
-        changes = deployment.parse("last_prerelease")
-        break
-
       case "release":
-        changes = deployment.parse("last_release")
+        if( github.payload.release.prerelease )
+          changes = deployment.parse("last_prerelease")
+        else
+          changes = deployment.parse("last_release")
         break
 
       default: 
