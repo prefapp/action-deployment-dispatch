@@ -12235,7 +12235,7 @@ async function run(){
     // get changes based on type of trigger
     let changes = false
 
-    core.info(JSON.stringify(github.context))
+    core.info(JSON.stringify(github.context, null, 4))
 
     switch(ctx.triggered_event){
 
