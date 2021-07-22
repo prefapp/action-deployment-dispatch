@@ -11528,6 +11528,22 @@ module.exports = class {
 
   }
 
+  allActions(){
+
+    const action_types = Object.keys(this.__actions)
+
+    let actions = []
+
+    for(const action_type of action_types){
+
+      const aa = this.parse(action_type)
+
+      actions = actions.concat(aa)
+    }
+
+    return actions
+  }
+
   get actions(){
 
     return this.__actions
@@ -11551,8 +11567,10 @@ module.exports = class {
     if(!this.__actions[action]) return []
 
     // retrieve all the actions of the 'action' type
-    return this.__actions[action].map(fn => fn())
-
+    return this.__actions[action]
+      
+      .map(fn => fn(action))
+      
   }
 
   //
@@ -11645,7 +11663,7 @@ module.exports = class {
           if( ! actions[versionType] )
             actions[versionType] = []
 
-          actions[versionType].push(() => {
+          actions[versionType].push((type) => {
           
             return {
   
@@ -11654,6 +11672,8 @@ module.exports = class {
               app,
 
               env,
+
+              type,
 
               service: this.data[tenant][app][env].service
 
@@ -11713,7 +11733,7 @@ module.exports = class {
 
     core.info(JSON.stringify(this.actions, null, 4))
 
-    for( const action of this.actions){
+    for( const action of this.actions ){
 
       const deploymentEvent = await this.__preparePayload(action)
 
@@ -11741,7 +11761,9 @@ module.exports = class {
 
       ...action,
 
-      image: `${this.ctx.image_repository}:${image}`
+      image: `${this.ctx.image_repository}:${image}`,
+
+      reviewers: `${this.ctx.actor}`
 
     }
 
@@ -12194,6 +12216,8 @@ async function run(){
 
     triggered_event: github.context.eventName,
 
+    actor: github.context.payload.actor,
+
     images: (type) => {
 
       return ImagesCalculator(type, ctx)
@@ -12224,7 +12248,14 @@ async function run(){
 }
 
   function processDeploymentFileWithChanges(ctx){
+
+    // load the deployments
+    const deployment = loadDeployment(ctx)
   
+    const changes = deployment.allChanges()
+
+    
+
   }
   
   function processEvent(ctx){
@@ -12245,14 +12276,10 @@ async function run(){
         
           changes = deployment.parse("last_prerelease")
         
-          changes.forEach(ch => ch.type = "last_prerelease")
-
         }
         else{
 
           changes = deployment.parse("last_release")
-
-          changes.forEach(ch => ch.type = "last_release")
 
         }
 
@@ -12265,10 +12292,8 @@ async function run(){
           const branch = github.context.payload.ref.replace(/^refs\/heads\//, "")
           
           core.info(branch)
-          
-          changes = deployment.parse(`branch_${branch}`)
 
-          changes.forEach(ch => ch.type = `branch_${branch}`)
+          changes = deployment.parse(`branch_${branch}`)
 
         }
 
