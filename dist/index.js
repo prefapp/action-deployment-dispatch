@@ -11528,22 +11528,6 @@ module.exports = class {
 
   }
 
-  allActions(){
-
-    const action_types = Object.keys(this.__actions)
-
-    let actions = []
-
-    for(const action_type of action_types){
-
-      const aa = this.parse(action_type)
-
-      actions = actions.concat(aa)
-    }
-
-    return actions
-  }
-
   get actions(){
 
     return this.__actions
@@ -11567,10 +11551,8 @@ module.exports = class {
     if(!this.__actions[action]) return []
 
     // retrieve all the actions of the 'action' type
-    return this.__actions[action]
-      
-      .map(fn => fn(action))
-      
+    return this.__actions[action].map(fn => fn())
+
   }
 
   //
@@ -11663,7 +11645,7 @@ module.exports = class {
           if( ! actions[versionType] )
             actions[versionType] = []
 
-          actions[versionType].push((type) => {
+          actions[versionType].push(() => {
           
             return {
   
@@ -11672,8 +11654,6 @@ module.exports = class {
               app,
 
               env,
-
-              type,
 
               service: this.data[tenant][app][env].service
 
@@ -11731,25 +11711,14 @@ module.exports = class {
   //
   async dispatch(){
 
-    core.info(JSON.stringify(this.actions, null, 4))
-
-    for( const action of this.actions ){
+    for( const action of await this.actions){
 
       const deploymentEvent = await this.__preparePayload(action)
 
-      core.info(JSON.stringify(deploymentEvent, null, 4))
-
       await this.__dispatchEvent(deploymentEvent)
-
-      await this.__wait(10) // 10 seg
 
     }
   }
-
-    __wait(time){
-
-      return new Promise( ok => setTimeout(ok, time * 1000))
-    }
 
   async __preparePayload(action){
 
@@ -11761,9 +11730,7 @@ module.exports = class {
 
       ...action,
 
-      image: `${this.ctx.image_repository}:${image}`,
-
-      reviewers: `${this.ctx.actor}`
+      image: `${this.ctx.image_repository}:${image}`
 
     }
 
@@ -11803,40 +11770,36 @@ class DispatcherGithub{
       
       }, null, 4))
 
+      //await this.octokit.rest.repos.createDispatchEvent({
       //
-      // We create another client for using the special token
-      //
-      const ocktoki_dispatcher = github.getOctokit(this.ctx.token)
+      //  owner: this.ctx.owner,
 
-      await ocktoki_dispatcher.rest.repos.createDispatchEvent({
-      
-        owner: this.ctx.owner,
+      //  repo: this.ctx.repo,
 
-        repo: this.ctx.state_repo,
-
-        event_type: EVENT_TYPE,
+      //  event_type: EVENT_TYPE
  
-        client_payload: eventPayload
+      //  client_payload: eventPayload
 
-      })
+      //})
   
     }
     catch(error){
 
-      core.debug(error)
+      coge.debug.inspect(err)
 
-      if( error.status == 404){
+      throw error
+      //if( error.status == 404){
 
-        core.setFailed(
-        
-          `Repository not found, OR token has insufficient permissions.`
-        )
-      }
-      else{
+      //  core.setFailed(
+      //  
+      //    `Repository not found, OR token has insufficient permissions.`
+      //  )
+      //}
+      //else{
 
-        core.setFailed(error.message)
+      //  core.setFailed(error.message)
 
-      }
+      //}
     }
 
   }
@@ -11874,34 +11837,34 @@ module.exports = class {
     this.ctx = ctx
   }
 
-  async deploymentHasChanges(){
+  deploymentHasChanges(){
 
     //
     // Deployments.yaml can only be change through a PR
     //
-    if( !this.ctx.triggered_event == "push" )
+    if( !this.ctx.pull_request )
       return false
 
-    return this.fileHasChanges(this.ctx.deployment_file)
-
-  }
-
-  async fileHasChanges(file){
-
-    const changes = await this.octokit.rest.repos.compareCommitsWithBasehead({
+    return this.octokit.rest.pulls.listFiles({
     
       owner: this.ctx.owner,
 
       repo: this.ctx.repo,
 
-      basehead: github.context.payload.compare.replace(/.+compare\//, "")
+      pull_number: this.ctx.pull_request
 
+    }).then((r) => {
+ 
+      core.info(r)
+
+      core.info(this.ctx.deployment_file)
+
+      return r.data
+
+        .filter(change => change.filename == this.ctx.deployment_file).length > 0
     
     })
-
- //   core.info(JSON.stringify(changes, null, 4))
-
-    return changes.data.files.filter(fileChanged => fileChanged.filename == file).length >= 1
+    
   }
 
 }
@@ -12195,11 +12158,6 @@ async function run(){
 
     github_token: core.getInput("github_token"),
 
-    //
-    // This is the token we use to dispatch
-    // It is different from the github_token, because we need to trigger another action
-    // in another repo. 
-    //
     token: core.getInput('token'),
    
     state_repo: core.getInput('state_repo'),
@@ -12210,11 +12168,11 @@ async function run(){
 
     repo: github.context.payload.repository.name,
 
+    pull_request: core.getInput("pull_request"),
+
     deployment_file: core.getInput("deployment_file"),
 
     triggered_event: github.context.eventName,
-
-    actor: github.context.actor,
 
     images: (type) => {
 
@@ -12228,13 +12186,13 @@ async function run(){
   // we check if there were changes on the deployments file. 
   // If that is the case, we dispatch ALL its content
   //
-  if( ctx.triggered_event == "push" ){
- 
+  if( ctx.pull_request ){
+  
     const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
   
-    if( deploymentFileHasChanges ) {
+    if( deploymentHasChanges ) {
 
-      return processDeploymentFileWithChanges(ctx)
+      return __processDeploymentFileWithChanges(ctx)
     
     }
   }
@@ -12243,17 +12201,37 @@ async function run(){
   // We process the normal event
   //
   return processEvent(ctx)
+
+  //core.info("Loading")
+  //
+  //core.info(`Repo ${ctx.state_repo}`)
+  //
+  //let info = await ImagesCalculator("last_release", ctx)
+
+  //core.info("Latest release " + info)
+
+  //info = await ImagesCalculator("last_prerelease", ctx)
+
+  //core.info("Latest prerelease " + info)
+
+  //info = await ImagesCalculator("branch_main", ctx)
+
+  //core.info("commit " + info)
+
+  //info = await ImagesCalculator("branch_branch2", ctx)
+
+  //core.info("commit " + info)
+
+  //const changes = await new GitControl({ctx}).deploymentHasChanges()
+
+  //if( changes )
+  //  core.info("The file of deployments has changed!!")
+  //else
+  //  core.info("The file of deployments has not changed")
 }
 
   function processDeploymentFileWithChanges(ctx){
-
-    // load the deployments
-    const deployment = loadDeployment(ctx)
   
-    const changes = deployment.allActions()
-
-    new Dispatcher({actions: changes, ctx}).dispatch()
-    
   }
   
   function processEvent(ctx){
@@ -12272,10 +12250,14 @@ async function run(){
         
           changes = deployment.parse("last_prerelease")
         
+          changes.forEach(ch => ch.type = "last_prerelease")
+
         }
         else{
 
           changes = deployment.parse("last_release")
+
+          changes.forEach(ch => ch.type = "last_prerelease")
 
         }
 
@@ -12283,19 +12265,13 @@ async function run(){
 
       default: 
         //we take the branch
-        if( ctx.triggered_event == "push"){
-          
-          const branch = github.context.payload.ref.replace(/^refs\/heads\//, "")
-          
-          core.info(branch)
-
-          changes = deployment.parse(`branch_${branch}`)
-
-        }
-
+        if( ctx.triggered_event == "pull_request")
+          changes = ""
 
         
     }
+
+    core.info(JSON.stringify(changes, null, 4))
 
     new Dispatcher({actions: changes, ctx}).dispatch()
 
