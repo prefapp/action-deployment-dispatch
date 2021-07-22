@@ -11882,7 +11882,7 @@ module.exports = class {
     if( !this.ctx.triggered_event == "push" )
       return false
 
-    const c = await this.ocktokit.rest.git.getCommit({
+    const c = await this.octokit.rest.git.getCommit({
     
       owner: this.ctx.owner,
 
