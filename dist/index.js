@@ -12250,7 +12250,7 @@ async function run(){
     // load the deployments
     const deployment = loadDeployment(ctx)
   
-    const changes = deployment.allChanges()
+    const changes = deployment.allActions()
 
     new Dispatcher({actions: changes, ctx}).dispatch()
     
