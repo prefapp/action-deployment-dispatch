@@ -11892,6 +11892,8 @@ module.exports = class {
     
     })
 
+    core.info(JSON.stringify(c, null, 4))
+
     return false
 
     //return this.octokit.rest.pulls.listFiles({
