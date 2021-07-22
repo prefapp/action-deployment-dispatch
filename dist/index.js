@@ -11715,6 +11715,8 @@ module.exports = class {
 
       const deploymentEvent = await this.__preparePayload(action)
 
+      core.info(JSON.stringify(deploymentEvent, null, 4))
+
       await this.__dispatchEvent(deploymentEvent)
 
       await this.__wait(10) // 10 seg
