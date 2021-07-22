@@ -12254,8 +12254,8 @@ async function run(){
   
     const changes = deployment.allChanges()
 
+    new Dispatcher({actions: changes, ctx}).dispatch()
     
-
   }
   
   function processEvent(ctx){
