@@ -11888,7 +11888,7 @@ module.exports = class {
 
       repo: this.ctx.repo,
 
-      commit_sha: github.payload.commits[0].id
+      commit_sha: githubc.context.payload.commits[0].id
     
     })
 
