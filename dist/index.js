@@ -11879,7 +11879,7 @@ module.exports = class {
     //
     // Deployments.yaml can only be change through a PR
     //
-    if( !this.ctx.pull_request )
+    if( !this.ctx.triggered_event == "push" )
       return false
 
     return this.octokit.rest.pulls.listFiles({
@@ -12229,9 +12229,13 @@ async function run(){
   // If that is the case, we dispatch ALL its content
   //
   if( ctx.triggered_event == "push" ){
-  
+ 
+    core.info("EIQUI")
+
     const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
   
+    core.info(deploymentHasChanges)
+
     if( deploymentFileHasChanges ) {
 
       return __processDeploymentFileWithChanges(ctx)
@@ -12263,8 +12267,6 @@ async function run(){
 
     // get changes based on type of trigger
     let changes = false
-
-    core.info(JSON.stringify(github.context, null, 4))
 
     switch(ctx.triggered_event){
 
