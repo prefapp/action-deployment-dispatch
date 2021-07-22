@@ -12260,8 +12260,18 @@ async function run(){
 
       default: 
         //we take the branch
-        if( ctx.triggered_event == "push")
-          changes = []
+        if( ctx.triggered_event == "push"){
+          
+          const branch = github.context.payload.ref.replace(/^ref\/head\//, "")
+          
+          core.info(branch)
+          
+          changes = deployment.parse(`branch_${branch}`)
+
+          changes.forEach(ch => ch.type = `branch_${branch}`)
+
+        }
+
 
         
     }
