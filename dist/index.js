@@ -11790,7 +11790,7 @@ class DispatcherGithub{
     }
     catch(error){
 
-      coge.debug.inspect(err)
+      core.debug.inspect(err)
 
       throw error
       //if( error.status == 404){
