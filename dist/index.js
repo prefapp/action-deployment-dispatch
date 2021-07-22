@@ -12232,7 +12232,7 @@ async function run(){
   
     const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
   
-    if( deploymentHasChanges ) {
+    if( deploymentFileHasChanges ) {
 
       return __processDeploymentFileWithChanges(ctx)
     
