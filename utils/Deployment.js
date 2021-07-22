@@ -69,7 +69,7 @@ module.exports = class {
     // for comparing we use a serialization
     function serialize(action){
 
-      return JSON.stringify(["tenant", "app", "env", "service_name"].map(k => action[k]))
+      return JSON.stringify(["tenant", "app", "env", "service_names"].map(k => action[k]))
     }
 
     function unserialize(action){
@@ -78,7 +78,7 @@ module.exports = class {
 
       action = JSON.parse(action);
 
-      ["tenant", "app", "env", "service_name"].forEach(k => o[k] = action.shift())
+      ["tenant", "app", "env", "service_names"].forEach(k => o[k] = action.shift())
 
       return o
     }
@@ -161,7 +161,7 @@ module.exports = class {
 
               type,
 
-              service_name: this.data[tenant][app][env].service_name
+              service_names: this.data[tenant][app][env].service_names
 
             }
           })

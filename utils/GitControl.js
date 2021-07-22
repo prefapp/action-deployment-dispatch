@@ -18,6 +18,12 @@ module.exports = class {
     if( !this.ctx.triggered_event == "push" )
       return false
 
+    //
+    // We only take into account changes of the master branch
+    //
+    if( this.ctx.current_branch !== this.ctx.master_branch )
+      return false
+
     return this.fileHasChanges(this.ctx.deployment_file)
 
   }
