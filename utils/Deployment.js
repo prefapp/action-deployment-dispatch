@@ -14,6 +14,22 @@ module.exports = class {
 
   }
 
+  allActions(){
+
+    const action_types = Object.keys(this.__actions)
+
+    let actions = []
+
+    for(const action_type of action_types){
+
+      const aa = this.parse(action_type)
+
+      actions = actions.concat(aa)
+    }
+
+    return actions
+  }
+
   get actions(){
 
     return this.__actions
@@ -37,8 +53,10 @@ module.exports = class {
     if(!this.__actions[action]) return []
 
     // retrieve all the actions of the 'action' type
-    return this.__actions[action].map(fn => fn())
-
+    return this.__actions[action]
+      
+      .map(fn => fn(action))
+      
   }
 
   //
@@ -51,7 +69,7 @@ module.exports = class {
     // for comparing we use a serialization
     function serialize(action){
 
-      return JSON.stringify(["tenant", "app", "env", "service"].map(k => action[k]))
+      return JSON.stringify(["tenant", "app", "env", "service_names"].map(k => action[k]))
     }
 
     function unserialize(action){
@@ -60,7 +78,7 @@ module.exports = class {
 
       action = JSON.parse(action);
 
-      ["tenant", "app", "env", "service"].forEach(k => o[k] = action.shift())
+      ["tenant", "app", "env", "service_names"].forEach(k => o[k] = action.shift())
 
       return o
     }
@@ -131,7 +149,7 @@ module.exports = class {
           if( ! actions[versionType] )
             actions[versionType] = []
 
-          actions[versionType].push(() => {
+          actions[versionType].push((type) => {
           
             return {
   
@@ -141,7 +159,9 @@ module.exports = class {
 
               env,
 
-              service: this.data[tenant][app][env].service
+              type,
+
+              service_names: this.data[tenant][app][env].service_names
 
             }
           })

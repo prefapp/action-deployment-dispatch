@@ -37,7 +37,9 @@ test("Deployment analyzes and retrieves correctly the dispatches", () => {
 
       env: "pre",
 
-      service: "hello"
+      service_names: "hello",
+
+      type: "last_prerelease"
     }
   
   ])
@@ -51,7 +53,9 @@ test("Deployment analyzes and retrieves correctly the dispatches", () => {
 
       env: "pro",
 
-      service: "hello"
+      service_names: "hello",
+
+      type: "last_release"
     },
 
     {
@@ -61,7 +65,9 @@ test("Deployment analyzes and retrieves correctly the dispatches", () => {
 
       env: "pre",
 
-      service: "client"
+      service_names: "client",
+
+      type: "last_release"
     }
   
   ])
@@ -87,7 +93,7 @@ test("Deployment is able to make a diff with another deployment", function(){
 
         env: "pro",
 
-        service: "hello"
+        service_names: "hello"
       },
     
     ],
@@ -105,11 +111,52 @@ test("Deployment is able to make a diff with another deployment", function(){
 
         env: "pro",
 
-        service: "hello"
+        service_names: "hello"
       },
     
     ],
 
   })
+
+})
+
+test("Deployment can render all the actions", function(){
+
+  const deployment_data = fs.readFileSync("./fixtures/deployment.test.yaml")
+
+  const deployment = new Deployment(deployment_data).init()
+
+  expect(deployment.allActions()).toMatchObject([
+
+      {
+            "tenant": "tenant1",
+            "app": "release_foo",
+            "env": "pre",
+            "service_names": "hello",
+            "type": "last_prerelease"
+        },
+        {
+            "tenant": "tenant1",
+            "app": "release_foo",
+            "env": "pro",
+            "service_names": "hello",
+            "type": "last_release"
+        },
+        {
+            "tenant": "tenant2",
+            "app": "release_paprika",
+            "env": "pre",
+            "service_names": "client",
+            "type": "last_release"
+        },
+        {
+            "tenant": "tenant1",
+            "app": "release_foo",
+            "env": "dev",
+            "service_names": "hello",
+            "type": "branch_main"
+        }
+
+  ])
 
 })
