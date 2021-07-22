@@ -12194,6 +12194,9 @@ const fs = __nccwpck_require__(5747)
 
 async function run(){
 
+  core.info(JSON.stringify(github.context, null, 4))
+  core.info(JSON.stringify(github, null, 4))
+
   //
   // We create a context to pass to other parts of the system
   //
