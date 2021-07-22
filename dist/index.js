@@ -11899,9 +11899,9 @@ module.exports = class {
     
     })
 
-    core.info(JSON.stringify(changes, null, 4))
+ //   core.info(JSON.stringify(changes, null, 4))
 
-    return changes.files.filter(fileChanged => fileChanged.filename == file).length >= 1
+    return changes.data.files.filter(fileChanged => fileChanged.filename == file).length >= 1
   }
 
 }
