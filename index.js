@@ -19,6 +19,11 @@ async function run(){
 
     github_token: core.getInput("github_token"),
 
+    //
+    // This is the token we use to dispatch
+    // It is different from the github_token, because we need to trigger another action
+    // in another repo. 
+    //
     token: core.getInput('token'),
    
     state_repo: core.getInput('state_repo'),
@@ -29,11 +34,15 @@ async function run(){
 
     repo: github.context.payload.repository.name,
 
-    pull_request: core.getInput("pull_request"),
-
     deployment_file: core.getInput("deployment_file"),
 
     triggered_event: github.context.eventName,
+
+    actor: github.context.actor,
+
+    master_branch: github.context.repository.master_branch,
+
+    current_branch: github.context.ref.replace("refs/heads/", ""),
 
     images: (type) => {
 
@@ -47,13 +56,13 @@ async function run(){
   // we check if there were changes on the deployments file. 
   // If that is the case, we dispatch ALL its content
   //
-  if( ctx.pull_request ){
-  
+  if( ctx.triggered_event == "push" ){
+ 
     const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
   
-    if( deploymentHasChanges ) {
+    if( deploymentFileHasChanges ) {
 
-      return __processDeploymentFileWithChanges(ctx)
+      return processDeploymentFileWithChanges(ctx)
     
     }
   }
@@ -62,37 +71,17 @@ async function run(){
   // We process the normal event
   //
   return processEvent(ctx)
-
-  //core.info("Loading")
-  //
-  //core.info(`Repo ${ctx.state_repo}`)
-  //
-  //let info = await ImagesCalculator("last_release", ctx)
-
-  //core.info("Latest release " + info)
-
-  //info = await ImagesCalculator("last_prerelease", ctx)
-
-  //core.info("Latest prerelease " + info)
-
-  //info = await ImagesCalculator("branch_main", ctx)
-
-  //core.info("commit " + info)
-
-  //info = await ImagesCalculator("branch_branch2", ctx)
-
-  //core.info("commit " + info)
-
-  //const changes = await new GitControl({ctx}).deploymentHasChanges()
-
-  //if( changes )
-  //  core.info("The file of deployments has changed!!")
-  //else
-  //  core.info("The file of deployments has not changed")
 }
 
   function processDeploymentFileWithChanges(ctx){
+
+    // load the deployments
+    const deployment = loadDeployment(ctx)
   
+    const changes = deployment.allActions()
+
+    new Dispatcher({actions: changes, ctx}).dispatch()
+    
   }
   
   function processEvent(ctx){
@@ -111,14 +100,10 @@ async function run(){
         
           changes = deployment.parse("last_prerelease")
         
-          changes.forEach(ch => ch.type = "last_prerelease")
-
         }
         else{
 
           changes = deployment.parse("last_release")
-
-          changes.forEach(ch => ch.type = "last_prerelease")
 
         }
 
@@ -126,13 +111,19 @@ async function run(){
 
       default: 
         //we take the branch
-        if( ctx.triggered_event == "pull_request")
-          changes = ""
+        if( ctx.triggered_event == "push"){
+          
+          const branch = github.context.payload.ref.replace(/^refs\/heads\//, "")
+          
+          core.info(branch)
+
+          changes = deployment.parse(`branch_${branch}`)
+
+        }
+
 
         
     }
-
-    core.info(JSON.stringify(changes, null, 4))
 
     new Dispatcher({actions: changes, ctx}).dispatch()
 

@@ -10,34 +10,40 @@ module.exports = class {
     this.ctx = ctx
   }
 
-  deploymentHasChanges(){
+  async deploymentHasChanges(){
 
     //
     // Deployments.yaml can only be change through a PR
     //
-    if( !this.ctx.pull_request )
+    if( !this.ctx.triggered_event == "push" )
       return false
 
-    return this.octokit.rest.pulls.listFiles({
+    //
+    // We only take into account changes of the master branch
+    //
+    if( this.ctx.current_branch !== this.ctx.master_branch )
+      return false
+
+    return this.fileHasChanges(this.ctx.deployment_file)
+
+  }
+
+  async fileHasChanges(file){
+
+    const changes = await this.octokit.rest.repos.compareCommitsWithBasehead({
     
       owner: this.ctx.owner,
 
       repo: this.ctx.repo,
 
-      pull_number: this.ctx.pull_request
+      basehead: github.context.payload.compare.replace(/.+compare\//, "")
 
-    }).then((r) => {
- 
-      core.info(r)
-
-      core.info(this.ctx.deployment_file)
-
-      return r.data
-
-        .filter(change => change.filename == this.ctx.deployment_file).length > 0
     
     })
-    
+
+ //   core.info(JSON.stringify(changes, null, 4))
+
+    return changes.data.files.filter(fileChanged => fileChanged.filename == file).length >= 1
   }
 
 }

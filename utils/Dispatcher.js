@@ -32,14 +32,25 @@ module.exports = class {
   //
   async dispatch(){
 
-    for( const action of await this.actions){
+    core.info(JSON.stringify(this.actions, null, 4))
+
+    for( const action of this.actions ){
 
       const deploymentEvent = await this.__preparePayload(action)
 
+      core.info(JSON.stringify(deploymentEvent, null, 4))
+
       await this.__dispatchEvent(deploymentEvent)
+
+      await this.__wait(10) // 10 seg
 
     }
   }
+
+    __wait(time){
+
+      return new Promise( ok => setTimeout(ok, time * 1000))
+    }
 
   async __preparePayload(action){
 
@@ -51,7 +62,9 @@ module.exports = class {
 
       ...action,
 
-      image: `${this.ctx.image_repository}:${image}`
+      image: `${this.ctx.image_repository}:${image}`,
+
+      reviewers: `${this.ctx.actor}`
 
     }
 
@@ -91,36 +104,40 @@ class DispatcherGithub{
       
       }, null, 4))
 
-      //await this.octokit.rest.repos.createDispatchEvent({
       //
-      //  owner: this.ctx.owner,
+      // We create another client for using the special token
+      //
+      const ocktoki_dispatcher = github.getOctokit(this.ctx.token)
 
-      //  repo: this.ctx.repo,
+      await ocktoki_dispatcher.rest.repos.createDispatchEvent({
+      
+        owner: this.ctx.owner,
 
-      //  event_type: EVENT_TYPE
+        repo: this.ctx.state_repo,
+
+        event_type: EVENT_TYPE,
  
-      //  client_payload: eventPayload
+        client_payload: eventPayload
 
-      //})
+      })
   
     }
     catch(error){
 
-      coge.debug.inspect(err)
+      core.debug(error)
 
-      throw error
-      //if( error.status == 404){
+      if( error.status == 404){
 
-      //  core.setFailed(
-      //  
-      //    `Repository not found, OR token has insufficient permissions.`
-      //  )
-      //}
-      //else{
+        core.setFailed(
+        
+          `Repository not found, OR token has insufficient permissions.`
+        )
+      }
+      else{
 
-      //  core.setFailed(error.message)
+        core.setFailed(error.message)
 
-      //}
+      }
     }
 
   }
