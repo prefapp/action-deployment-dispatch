@@ -11892,7 +11892,17 @@ module.exports = class {
     
     })
 
-    core.info(JSON.stringify(c, null, 4))
+    const tree = await this.octokit.rest.git.getTree({
+    
+      owner: this.ctx.owner,
+
+      repo: this.ctx.repo,
+
+      tree_sha: c.data.tree.sha
+    
+    })
+
+    core.info(JSON.stringify(tree, null, 4))
 
     return false
 
