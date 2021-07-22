@@ -11711,7 +11711,9 @@ module.exports = class {
   //
   async dispatch(){
 
-    for( const action of await this.actions){
+    core.info(JSON.stringify(this.actions, null, 4))
+
+    for( const action of this.actions){
 
       const deploymentEvent = await this.__preparePayload(action)
 
