@@ -12250,7 +12250,7 @@ async function run(){
 
           changes = deployment.parse("last_release")
 
-          changes.forEach(ch => ch.type = "last_prerelease")
+          changes.forEach(ch => ch.type = "last_release")
 
         }
 
