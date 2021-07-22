@@ -12262,7 +12262,7 @@ async function run(){
         //we take the branch
         if( ctx.triggered_event == "push"){
           
-          const branch = github.context.payload.ref.replace(/^ref\/head\//, "")
+          const branch = github.context.payload.ref.replace(/^refs\/heads\//, "")
           
           core.info(branch)
           
