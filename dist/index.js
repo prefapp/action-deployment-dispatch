@@ -12235,6 +12235,8 @@ async function run(){
     // get changes based on type of trigger
     let changes = false
 
+    core.info(JSON.stringify(github.context))
+
     switch(ctx.triggered_event){
 
       case "release":
@@ -12258,8 +12260,8 @@ async function run(){
 
       default: 
         //we take the branch
-        if( ctx.triggered_event == "pull_request")
-          changes = ""
+        if( ctx.triggered_event == "push")
+          changes = []
 
         
     }
