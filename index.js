@@ -40,6 +40,10 @@ async function run(){
 
     actor: github.context.actor,
 
+    master_branch: github.context.repository.master_branch,
+
+    current_branch: github.context.ref.replace("refs/heads/", ""),
+
     images: (type) => {
 
       return ImagesCalculator(type, ctx)
