@@ -11790,7 +11790,7 @@ class DispatcherGithub{
     }
     catch(error){
 
-      core.debug.inspect(err)
+      core.debug.inspect(error)
 
       throw error
       //if( error.status == 404){
