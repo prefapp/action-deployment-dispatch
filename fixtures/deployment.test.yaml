@@ -1,18 +1,18 @@
 tenant1:
   release_foo:
     dev:
-      service: hello
+      service_name: hello
       version: branch_main # branch name
     pre:
-      service: hello
+      service_name: hello
       version: last_prerelease
     pro:
-      service: hello
+      service_name: hello
       version: last_release
 tenant2:
   release_paprika:
     pre:
-      service: client
+      service_name: client
       version: last_release
 
 
