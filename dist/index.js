@@ -12216,7 +12216,7 @@ async function run(){
 
     triggered_event: github.context.eventName,
 
-    actor: github.context.payload.actor,
+    actor: github.context.actor,
 
     images: (type) => {
 
