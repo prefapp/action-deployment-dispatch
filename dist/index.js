@@ -11876,7 +11876,19 @@ module.exports = class {
 
   async deploymentHasChanges(){
 
-    const salida = await this.octokit.rest.repos.compareCommitsWithBasehead({
+    //
+    // Deployments.yaml can only be change through a PR
+    //
+    if( !this.ctx.triggered_event == "push" )
+      return false
+
+    return this.fileHasChanges(this.ctx.deployment_file)
+
+  }
+
+  async fileHasChanges(file){
+
+    const changes = await this.octokit.rest.repos.compareCommitsWithBasehead({
     
       owner: this.ctx.owner,
 
@@ -11887,75 +11899,7 @@ module.exports = class {
     
     })
 
-    core.info(JSON.stringify(salida, null, 4))
-    
-    throw 1
-
-    //
-    // Deployments.yaml can only be change through a PR
-    //
-    if( !this.ctx.triggered_event == "push" )
-      return false
-
-    return this.fileHasChanges(this.ctx.deployment_file)
-
-    //return this.octokit.rest.pulls.listFiles({
-    //
-    //  owner: this.ctx.owner,
-
-    //  repo: this.ctx.repo,
-
-    //  pull_number: this.ctx.pull_request
-
-    //}).then((r) => {
- 
-    //  core.info(r)
-
-    //  core.info(this.ctx.deployment_file)
-
-    //  return r.data
-
-    //    .filter(change => change.filename == this.ctx.deployment_file).length > 0
-    //
-    //})
-    
-  }
-
-  async fileHasChanges(file){
-
-    let has_changes = false
-
-    for(const commit of github.context.payload.commits){
-
-      const commit_info = await this.octokit.rest.git.getCommit({
-      
-        owner: this.ctx.owner,
-
-        repo: this.ctx.repo,
-
-        commit_sha: commit.id
-      
-      })
-
-      const tree_info = await this.octokit.rest.git.getTree({
-      
-        owner: this.ctx.owner,
-
-        repo: this.ctx.repo,
-
-        tree_sha: commit_info.data.tree.sha
-      
-      })
-
-      has_changes = tree_info.data.tree.filter(files => file.path == file)[0]
-
-      if(has_changes)
-        break
-
-    }
-
-    return has_changes
-
+    return changes.files.filter(fileChanged => fileChanged.filename == file).length >= 1
   }
 
 }
