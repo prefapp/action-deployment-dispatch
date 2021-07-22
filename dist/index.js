@@ -12232,8 +12232,6 @@ async function run(){
  
     const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
   
-    core.info(deploymentHasChanges)
-
     if( deploymentFileHasChanges ) {
 
       return __processDeploymentFileWithChanges(ctx)
