@@ -11717,8 +11717,15 @@ module.exports = class {
 
       await this.__dispatchEvent(deploymentEvent)
 
+      await this.__wait(10) // 10 seg
+
     }
   }
+
+    __wait(time){
+
+      return new Promise( ok => setTimeout(ok, time * 1000))
+    }
 
   async __preparePayload(action){
 
@@ -11792,19 +11799,18 @@ class DispatcherGithub{
 
       core.debug(error)
 
-      throw error
-      //if( error.status == 404){
+      if( error.status == 404){
 
-      //  core.setFailed(
-      //  
-      //    `Repository not found, OR token has insufficient permissions.`
-      //  )
-      //}
-      //else{
+        core.setFailed(
+        
+          `Repository not found, OR token has insufficient permissions.`
+        )
+      }
+      else{
 
-      //  core.setFailed(error.message)
+        core.setFailed(error.message)
 
-      //}
+      }
     }
 
   }
@@ -12163,6 +12169,11 @@ async function run(){
 
     github_token: core.getInput("github_token"),
 
+    //
+    // This is the token we use to dispatch
+    // It is different from the github_token, because we need to trigger another action
+    // in another repo. 
+    //
     token: core.getInput('token'),
    
     state_repo: core.getInput('state_repo'),
