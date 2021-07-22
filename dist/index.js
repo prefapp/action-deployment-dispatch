@@ -11770,17 +11770,22 @@ class DispatcherGithub{
       
       }, null, 4))
 
-      //await this.octokit.rest.repos.createDispatchEvent({
       //
-      //  owner: this.ctx.owner,
+      // We create another client for using the special token
+      //
+      const ocktoki_dispatcher = github.getOctokit(this.ctx.token)
 
-      //  repo: this.ctx.repo,
+      await ocktoki_dispatcher.rest.repos.createDispatchEvent({
+      
+        owner: this.ctx.owner,
 
-      //  event_type: EVENT_TYPE
+        repo: this.ctx.state_repo,
+
+        event_type: EVENT_TYPE,
  
-      //  client_payload: eventPayload
+        client_payload: eventPayload
 
-      //})
+      })
   
     }
     catch(error){
@@ -12201,33 +12206,6 @@ async function run(){
   // We process the normal event
   //
   return processEvent(ctx)
-
-  //core.info("Loading")
-  //
-  //core.info(`Repo ${ctx.state_repo}`)
-  //
-  //let info = await ImagesCalculator("last_release", ctx)
-
-  //core.info("Latest release " + info)
-
-  //info = await ImagesCalculator("last_prerelease", ctx)
-
-  //core.info("Latest prerelease " + info)
-
-  //info = await ImagesCalculator("branch_main", ctx)
-
-  //core.info("commit " + info)
-
-  //info = await ImagesCalculator("branch_branch2", ctx)
-
-  //core.info("commit " + info)
-
-  //const changes = await new GitControl({ctx}).deploymentHasChanges()
-
-  //if( changes )
-  //  core.info("The file of deployments has changed!!")
-  //else
-  //  core.info("The file of deployments has not changed")
 }
 
   function processDeploymentFileWithChanges(ctx){
@@ -12270,8 +12248,6 @@ async function run(){
 
         
     }
-
-    core.info(JSON.stringify(changes, null, 4))
 
     new Dispatcher({actions: changes, ctx}).dispatch()
 
