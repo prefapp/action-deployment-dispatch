@@ -12210,8 +12210,6 @@ async function run(){
 
     repo: github.context.payload.repository.name,
 
-    pull_request: core.getInput("pull_request"),
-
     deployment_file: core.getInput("deployment_file"),
 
     triggered_event: github.context.eventName,
@@ -12230,7 +12228,7 @@ async function run(){
   // we check if there were changes on the deployments file. 
   // If that is the case, we dispatch ALL its content
   //
-  if( ctx.pull_request ){
+  if( ctx.triggered_event == "push" ){
   
     const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
   
