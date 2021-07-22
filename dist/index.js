@@ -11874,7 +11874,7 @@ module.exports = class {
     this.ctx = ctx
   }
 
-  deploymentHasChanges(){
+  async deploymentHasChanges(){
 
     //
     // Deployments.yaml can only be change through a PR
@@ -11882,25 +11882,37 @@ module.exports = class {
     if( !this.ctx.triggered_event == "push" )
       return false
 
-    return this.octokit.rest.pulls.listFiles({
+    const c = await this.ocktokit.rest.git.getCommit({
     
       owner: this.ctx.owner,
 
       repo: this.ctx.repo,
 
-      pull_number: this.ctx.pull_request
-
-    }).then((r) => {
- 
-      core.info(r)
-
-      core.info(this.ctx.deployment_file)
-
-      return r.data
-
-        .filter(change => change.filename == this.ctx.deployment_file).length > 0
+      commit_sha: this.ctx.payload.commits[0].id
     
     })
+
+    return false
+
+    //return this.octokit.rest.pulls.listFiles({
+    //
+    //  owner: this.ctx.owner,
+
+    //  repo: this.ctx.repo,
+
+    //  pull_number: this.ctx.pull_request
+
+    //}).then((r) => {
+ 
+    //  core.info(r)
+
+    //  core.info(this.ctx.deployment_file)
+
+    //  return r.data
+
+    //    .filter(change => change.filename == this.ctx.deployment_file).length > 0
+    //
+    //})
     
   }
 
@@ -12230,8 +12242,6 @@ async function run(){
   //
   if( ctx.triggered_event == "push" ){
  
-    core.info("EIQUI")
-
     const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
   
     core.info(deploymentHasChanges)
