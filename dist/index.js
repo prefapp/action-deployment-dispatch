@@ -12234,7 +12234,7 @@ async function run(){
   
     if( deploymentFileHasChanges ) {
 
-      return __processDeploymentFileWithChanges(ctx)
+      return processDeploymentFileWithChanges(ctx)
     
     }
   }
