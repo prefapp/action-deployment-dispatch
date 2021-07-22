@@ -12194,9 +12194,6 @@ const fs = __nccwpck_require__(5747)
 
 async function run(){
 
-  core.info(JSON.stringify(github.context, null, 4))
-  core.info(JSON.stringify(github, null, 4))
-
   //
   // We create a context to pass to other parts of the system
   //
@@ -12225,7 +12222,7 @@ async function run(){
 
     actor: github.context.actor,
 
-    master_branch: github.repository.master_branch,
+    master_branch: github.context.payload.repository.master_branch,
 
     current_branch: github.context.ref.replace("refs/heads/", ""),
 
