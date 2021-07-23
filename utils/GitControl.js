@@ -23,9 +23,6 @@ module.exports = class {
     //
     const current_branch = github.context.ref.replace("refs/heads/", "")
 
-    const master_branch = github.context.payload.repository.master_branch
-
-
     if( current_branch !== master_branch )
       return false
 
