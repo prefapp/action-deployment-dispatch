@@ -21,9 +21,7 @@ module.exports = class {
     //
     // We only take into account changes of the master branch
     //
-    const current_branch = github.context.ref.replace("refs/heads/", "")
-
-    if( current_branch !== this.ctx.master_branch )
+    if( this.ctx.current_branch !== this.ctx.master_branch )
       return false
 
     return this.fileHasChanges(this.ctx.deployment_file)
