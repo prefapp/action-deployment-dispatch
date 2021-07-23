@@ -23,7 +23,10 @@ module.exports = class {
     //
     const current_branch = github.context.ref.replace("refs/heads/", "")
 
-    if( current_branch !== this.ctx.master_branch )
+    const master_branch = github.context.payload.repository.master_branch
+
+
+    if( current_branch !== master_branch )
       return false
 
     return this.fileHasChanges(this.ctx.deployment_file)

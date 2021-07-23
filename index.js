@@ -40,8 +40,6 @@ async function run(){
 
     actor: github.context.actor,
 
-    master_branch: github.context.payload.repository.master_branch,
-
     images: (type) => {
 
       return ImagesCalculator(type, ctx)
