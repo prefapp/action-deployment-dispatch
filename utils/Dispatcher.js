@@ -64,7 +64,7 @@ module.exports = class {
 
       image: `${this.ctx.image_repository}:${image}`,
 
-      reviewers: `${this.ctx.actor}`
+      reviewers: [ `${this.ctx.actor}` ]
 
     }
 
