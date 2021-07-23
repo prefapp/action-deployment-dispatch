@@ -42,6 +42,8 @@ async function run(){
 
     master_branch: github.context.payload.repository.master_branch,
 
+    current_branch: github.context.ref.replace("refs/heads/", ""),
+
     images: (type) => {
 
       return ImagesCalculator(type, ctx)
