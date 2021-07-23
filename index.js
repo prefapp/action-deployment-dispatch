@@ -38,6 +38,8 @@ async function run(){
 
     triggered_event: github.context.eventName,
 
+    dispatch_event_name: core.getInput("dispatch_event_name"),
+
     actor: github.context.actor,
 
     master_branch: github.context.payload.repository.master_branch,
