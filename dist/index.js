@@ -11757,6 +11757,8 @@ module.exports = class {
     // this function is a helper that really is calling ImageCalculator
     const image = await this.ctx.images(action.type)
 
+    core.info(`----------------------------- ${image} -------------------`)
+
     return {
 
       ...action,
@@ -11885,7 +11887,9 @@ module.exports = class {
     //
     // We only take into account changes of the master branch
     //
-    if( this.ctx.current_branch !== this.ctx.master_branch )
+    const current_branch = github.context.ref.replace("refs/heads/", "")
+
+    if( current_branch !== this.ctx.master_branch )
       return false
 
     return this.fileHasChanges(this.ctx.deployment_file)
