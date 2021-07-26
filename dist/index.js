@@ -11704,8 +11704,6 @@ module.exports = class {
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 
-const EVENT_TYPE = "dispatch-imagen-test"
-
 module.exports = class {
 
   constructor({actions, test = false, ctx}){
@@ -11757,15 +11755,13 @@ module.exports = class {
     // this function is a helper that really is calling ImageCalculator
     const image = await this.ctx.images(action.type)
 
-    core.info(`----------------------------- ${image} -------------------`)
-
     return {
 
       ...action,
 
       image: `${this.ctx.image_repository}:${image}`,
 
-      reviewers: `${this.ctx.actor}`
+      reviewers: [ `${this.ctx.actor}` ]
 
     }
 
@@ -11799,7 +11795,7 @@ class DispatcherGithub{
 
         repo: this.ctx.state_repo,
 
-        event_type: EVENT_TYPE,
+        event_type: this.ctx.dispatch_event_name,
  
         client_payload: eventPayload
       
@@ -12223,6 +12219,8 @@ async function run(){
     deployment_file: core.getInput("deployment_file"),
 
     triggered_event: github.context.eventName,
+
+    dispatch_event_name: core.getInput("dispatch_event_name"),
 
     actor: github.context.actor,
 
