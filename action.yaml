@@ -27,6 +27,9 @@ inputs:
   pull_request:
     description: "The pull request to use (optional)"
     default: ""
+  dispatch_event_name:
+    description: "The name of the event dispatch"
+    default: "dispatch-image"
 runs:
   using: 'node12'
   main: 'dist/index.js'

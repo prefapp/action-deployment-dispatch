@@ -5,8 +5,6 @@
 const core = require("@actions/core")
 const github = require("@actions/github")
 
-const EVENT_TYPE = "dispatch-imagen-test"
-
 module.exports = class {
 
   constructor({actions, test = false, ctx}){
@@ -98,7 +96,7 @@ class DispatcherGithub{
 
         repo: this.ctx.state_repo,
 
-        event_type: EVENT_TYPE,
+        event_type: this.ctx.dispatch_event_name,
  
         client_payload: eventPayload
       
