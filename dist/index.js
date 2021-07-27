@@ -11812,7 +11812,7 @@ class DispatcherGithub{
 
         repo: this.ctx.state_repo,
 
-        event_type: EVENT_TYPE,
+        event_type: this.ctx.dispatch_event_name,
  
         client_payload: eventPayload
 
@@ -11996,7 +11996,7 @@ module.exports = function(action_type, ctx){
       //
       // we only use the first 8 chars of the commit's SHA for tagging
       //
-      return b.data.commit.sha.substring(0, 7) 
+      return b.data.commit.sha.substring(0, 8) 
 
     })
 
