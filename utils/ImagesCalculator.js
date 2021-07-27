@@ -76,7 +76,7 @@ module.exports = function(action_type, ctx){
       //
       // we only use the first 8 chars of the commit's SHA for tagging
       //
-      return b.data.commit.sha.substring(0, 8) 
+      return b.data.commit.sha.substring(0, 7) 
 
     })
 
