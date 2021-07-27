@@ -113,7 +113,7 @@ class DispatcherGithub{
 
         repo: this.ctx.state_repo,
 
-        event_type: EVENT_TYPE,
+        event_type: this.ctx.dispatch_event_name,
  
         client_payload: eventPayload
 
