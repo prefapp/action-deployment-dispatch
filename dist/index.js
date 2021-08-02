@@ -11535,10 +11535,12 @@ module.exports = class {
 
       path: `${ctx.deployment_file}`
     
-    }).then((data) => {
-    
-      core.info(`---------`)
-      core.info(JSON.stringify(data, null, 4))
+    }).then(({data}) => {
+ 
+      return new Buffer(data.content, "base64").toString('utf-8')
+
+      //core.info(`---------`)
+      //core.info(JSON.stringify(data, null, 4))
     })
 
   }
