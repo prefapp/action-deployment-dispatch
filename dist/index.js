@@ -12294,6 +12294,7 @@ async function run(){
         break
 
       default: 
+
         //we take the branch
         if( ctx.triggered_event == "push"){
           
@@ -12304,8 +12305,15 @@ async function run(){
           changes = deployment.parse(`branch_${branch}`)
 
         }
+        else if( ctx.triggered_event == "pull_request"){
 
+          const branch = github.context.payload.event.pull_request.head.ref
+          
+          core.info(branch)
 
+          changes = deployment.parse(`branch_${branch}`)
+        }
+      
         
     }
 
