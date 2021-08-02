@@ -11537,7 +11537,7 @@ module.exports = class {
     
     }).then(({data}) => {
  
-      return new Buffer(data.content, "base64").toString('utf-8')
+      return Buffer.from(data.content, "base64").toString('utf-8')
 
       //core.info(`---------`)
       //core.info(JSON.stringify(data, null, 4))
@@ -12261,7 +12261,7 @@ async function run(){
   
   }
 
-  core.info(JSON.stringify(github.context.payload.pull_request.head, null, 4))
+  //core.info(JSON.stringify(github.context.payload.pull_request.head, null, 4))
 
   //
   // we check if there were changes on the deployments file. 
