@@ -11518,8 +11518,31 @@ const fs = __nccwpck_require__(5747)
 
 const DYNAMIC_VERSIONS = ["last_prerelease", "last_release"]
 
+const core = __nccwpck_require__(2186)
+const github = __nccwpck_require__(5438)
+
 module.exports = class {
-  
+ 
+  static FROM_MAIN(ctx){
+
+    const octokit = github.getOctokit(ctx.token)
+    
+    return octokit.rest.repos.getContent({
+    
+      owner: ctx.owner,
+
+      repo: ctx.repo,
+
+      path: `${ctx.deployment_file}`
+    
+    }).then((data) => {
+    
+      core.info(`---------`)
+      core.info(data)
+    })
+
+  }
+
   constructor(data){
 
     this.data = data
@@ -12328,7 +12351,9 @@ async function run(){
     //
     function loadDeployment(ctx){
 
-      return new Deployment( fs.readFileSync( ctx.deployment_file ) ).init()
+      const file = Deployment.FROM_MAIN(ctx)
+
+      return new Deployment( file ).init()
     }
   
 run()
