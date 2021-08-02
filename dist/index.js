@@ -12309,7 +12309,7 @@ async function run(){
         }
         else if( ctx.triggered_event == "pull_request"){
 
-          const branch = github.context.event.pull_request.head.ref
+          const branch = github.context.payload.head.ref
           
           core.info(branch)
 
