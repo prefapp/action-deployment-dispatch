@@ -12236,7 +12236,7 @@ async function run(){
   
   }
 
-  core.info(JSON.stringify(github.event, null, 4))
+  core.info(JSON.stringify(github.payload.head, null, 4))
 
   //
   // we check if there were changes on the deployments file. 
