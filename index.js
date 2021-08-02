@@ -54,6 +54,8 @@ async function run(){
   
   }
 
+  //core.info(JSON.stringify(github.context.payload.pull_request.head, null, 4))
+
   //
   // we check if there were changes on the deployments file. 
   // If that is the case, we dispatch ALL its content
@@ -75,10 +77,10 @@ async function run(){
   return processEvent(ctx)
 }
 
-  function processDeploymentFileWithChanges(ctx){
+  async function processDeploymentFileWithChanges(ctx){
 
     // load the deployments
-    const deployment = loadDeployment(ctx)
+    const deployment = await loadDeployment(ctx)
   
     const changes = deployment.allActions()
 
@@ -86,10 +88,10 @@ async function run(){
     
   }
   
-  function processEvent(ctx){
+  async function processEvent(ctx){
    
     // load the deployments
-    const deployment = loadDeployment(ctx)
+    const deployment = await loadDeployment(ctx)
 
     // get changes based on type of trigger
     let changes = false
@@ -112,6 +114,7 @@ async function run(){
         break
 
       default: 
+
         //we take the branch
         if( ctx.triggered_event == "push"){
           
@@ -122,8 +125,15 @@ async function run(){
           changes = deployment.parse(`branch_${branch}`)
 
         }
+        else if( ctx.triggered_event == "pull_request"){
 
+          const branch = github.context.payload.pull_request.head.ref
+          
+          core.info(branch)
 
+          changes = deployment.parse(`branch_${branch}`)
+        }
+      
         
     }
 
@@ -134,9 +144,13 @@ async function run(){
     //
     // Loads the deployments file (as it is defined on inputs.deployment_file)
     //
-    function loadDeployment(ctx){
+    async function loadDeployment(ctx){
 
-      return new Deployment( fs.readFileSync( ctx.deployment_file ) ).init()
+      const file = await Deployment.FROM_MAIN(ctx)
+
+      core.info( file )
+
+      return new Deployment( file ).init()
     }
   
 run()
