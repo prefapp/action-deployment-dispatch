@@ -12284,10 +12284,10 @@ async function run(){
   return processEvent(ctx)
 }
 
-  function processDeploymentFileWithChanges(ctx){
+  async function processDeploymentFileWithChanges(ctx){
 
     // load the deployments
-    const deployment = loadDeployment(ctx)
+    const deployment = await loadDeployment(ctx)
   
     const changes = deployment.allActions()
 
@@ -12295,10 +12295,10 @@ async function run(){
     
   }
   
-  function processEvent(ctx){
+  async function processEvent(ctx){
    
     // load the deployments
-    const deployment = loadDeployment(ctx)
+    const deployment = await loadDeployment(ctx)
 
     // get changes based on type of trigger
     let changes = false
@@ -12351,9 +12351,11 @@ async function run(){
     //
     // Loads the deployments file (as it is defined on inputs.deployment_file)
     //
-    function loadDeployment(ctx){
+    async function loadDeployment(ctx){
 
-      const file = Deployment.FROM_MAIN(ctx)
+      const file = await Deployment.FROM_MAIN(ctx)
+
+      core.info( file )
 
       return new Deployment( file ).init()
     }
