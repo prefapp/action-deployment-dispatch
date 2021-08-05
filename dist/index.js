@@ -11608,7 +11608,7 @@ module.exports = class {
     // for comparing we use a serialization
     function serialize(action){
 
-      return JSON.stringify(["tenant", "app", "env", "service_names"].map(k => action[k]))
+      return JSON.stringify(["tenant", "app", "env", "service_names", "flavour"].map(k => action[k]))
     }
 
     function unserialize(action){
@@ -11617,7 +11617,7 @@ module.exports = class {
 
       action = JSON.parse(action);
 
-      ["tenant", "app", "env", "service_names"].forEach(k => o[k] = action.shift())
+      ["tenant", "app", "env", "service_names", "flavour"].forEach(k => o[k] = action.shift())
 
       return o
     }
@@ -11700,7 +11700,9 @@ module.exports = class {
 
               type,
 
-              service_names: this.data[tenant][app][env].service_names
+              service_names: this.data[tenant][app][env].service_names,
+
+              flavour: this.data[tenant][app][env].flavour
 
             }
           })
@@ -11778,7 +11780,7 @@ module.exports = class {
 
     // We need to extract the image tag according to the type (main, label, pre_release...)
     // this function is a helper that really is calling ImageCalculator
-    const image = await this.ctx.images(action.type)
+    const image = await this.ctx.images(action.type, action.flavour)
 
     return {
 
@@ -11946,27 +11948,40 @@ module.exports = class {
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 
-module.exports = function(action_type, ctx){
+module.exports = function({action_type, flavour}, ctx){
 
-  const octokit = github.getOctokit(ctx.github_token)
+  const image = __calculateImage(action_type, ctx)
 
-  switch(action_type){
-
-    case "last_prerelease":
-      return __last_prerelease(octokit, ctx)
-    case "last_release":
-      return __last_release(octokit, ctx)
-    default:
-      if(action_type.match(/^branch_/)){
-
-        return __last_branch_commit(action_type, octokit, ctx)
-      }
-      else{
-
-        return action_type
-      }
+  if(flavour){
+    return `${image}-${flavour}`
   }
+  else{
+    return image
+  }
+
 }
+
+  function __calculateImage(action_type){
+
+    const octokit = github.getOctokit(ctx.github_token)
+  
+    switch(action_type){
+  
+      case "last_prerelease":
+        return __last_prerelease(octokit, ctx)
+      case "last_release":
+        return __last_release(octokit, ctx)
+      default:
+        if(action_type.match(/^branch_/)){
+  
+          return __last_branch_commit(action_type, octokit, ctx)
+        }
+        else{
+  
+          return action_type
+        }
+    }
+  }
 
 
   function __last_release(octokit, ctx){
@@ -12253,9 +12268,9 @@ async function run(){
 
     current_branch: github.context.ref.replace("refs/heads/", ""),
 
-    images: (type) => {
+    images: (type, flavour) => {
 
-      return ImagesCalculator(type, ctx)
+      return ImagesCalculator({action_type: type, flavour}, ctx)
 
     }
   
