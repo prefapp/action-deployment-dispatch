@@ -30,6 +30,9 @@ inputs:
   dispatch_event_name:
     description: "The name of the event dispatch"
     default: "dispatch-image"
+  default_branch:
+    default: ${{ github.event.repository.master_branch }}
+    description: "The branch used as a reference for the deployment file"
 runs:
   using: 'node12'
   main: 'dist/index.js'

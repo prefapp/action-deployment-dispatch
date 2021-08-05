@@ -42,7 +42,7 @@ async function run(){
 
     actor: github.context.actor,
 
-    master_branch: github.context.payload.repository.master_branch,
+    master_branch: core.getInput("default_branch"),
 
     current_branch: github.context.ref.replace("refs/heads/", ""),
 
