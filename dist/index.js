@@ -11948,9 +11948,9 @@ module.exports = class {
 const core = __nccwpck_require__(2186)
 const github = __nccwpck_require__(5438)
 
-module.exports = function({action_type, flavour}, ctx){
+module.exports = async function({action_type, flavour}, ctx){
 
-  const image = __calculateImage(action_type, ctx)
+  const image = await __calculateImage(action_type, ctx)
 
   if(flavour){
     return `${image}-${flavour}`
