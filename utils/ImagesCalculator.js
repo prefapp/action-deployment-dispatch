@@ -1,27 +1,40 @@
 const core = require("@actions/core")
 const github = require("@actions/github")
 
-module.exports = function(action_type, ctx){
+module.exports = function({action_type, flavour}, ctx){
 
-  const octokit = github.getOctokit(ctx.github_token)
+  const image = __calculateImage(action_type, ctx)
 
-  switch(action_type){
-
-    case "last_prerelease":
-      return __last_prerelease(octokit, ctx)
-    case "last_release":
-      return __last_release(octokit, ctx)
-    default:
-      if(action_type.match(/^branch_/)){
-
-        return __last_branch_commit(action_type, octokit, ctx)
-      }
-      else{
-
-        return action_type
-      }
+  if(flavour){
+    return `${image}-${flavour}`
   }
+  else{
+    return image
+  }
+
 }
+
+  function __calculateImage(action_type){
+
+    const octokit = github.getOctokit(ctx.github_token)
+  
+    switch(action_type){
+  
+      case "last_prerelease":
+        return __last_prerelease(octokit, ctx)
+      case "last_release":
+        return __last_release(octokit, ctx)
+      default:
+        if(action_type.match(/^branch_/)){
+  
+          return __last_branch_commit(action_type, octokit, ctx)
+        }
+        else{
+  
+          return action_type
+        }
+    }
+  }
 
 
   function __last_release(octokit, ctx){

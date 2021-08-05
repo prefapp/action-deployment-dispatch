@@ -46,9 +46,9 @@ async function run(){
 
     current_branch: github.context.ref.replace("refs/heads/", ""),
 
-    images: (type) => {
+    images: (type, flavour) => {
 
-      return ImagesCalculator(type, ctx)
+      return ImagesCalculator({action_type: type, flavour}, ctx)
 
     }
   
