@@ -14,7 +14,7 @@ module.exports = function({action_type, flavour}, ctx){
 
 }
 
-  function __calculateImage(action_type){
+  function __calculateImage(action_type, ctx){
 
     const octokit = github.getOctokit(ctx.github_token)
   
