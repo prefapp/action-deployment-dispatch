@@ -18,6 +18,7 @@ tenant2:
     pre:
       service_names: 
       - client
-      version: last_release
+      version: last_prerelease
+      flavour: hello-flavour
 
 

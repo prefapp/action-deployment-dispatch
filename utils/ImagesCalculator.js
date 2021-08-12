@@ -1,9 +1,9 @@
 const core = require("@actions/core")
 const github = require("@actions/github")
 
-module.exports = function({action_type, flavour}, ctx){
+module.exports = async function({action_type, flavour}, ctx){
 
-  const image = __calculateImage(action_type, ctx)
+  const image = await __calculateImage(action_type, ctx)
 
   if(flavour){
     return `${image}-${flavour}`
