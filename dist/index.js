@@ -11953,7 +11953,7 @@ module.exports = async function({action_type, flavour}, ctx){
   const image = await __calculateImage(action_type, ctx)
 
   if(flavour){
-    return `${image}-${flavour}`
+    return `${image}_${flavour}`
   }
   else{
     return image
