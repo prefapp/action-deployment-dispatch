@@ -150,7 +150,7 @@ class DispatcherMock{
 
   dispatch(eventPayload){
 
-    return this.test(deploymentEvent)
+    return this.test(eventPayload)
 
   }
 }

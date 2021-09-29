@@ -1,5 +1,4 @@
 const core = require('@actions/core');
-const exec = require('@actions/exec');
 const github = require('@actions/github');
 
 const Deployment = require("./utils/Deployment.js")
@@ -7,8 +6,6 @@ const ImagesCalculator = require("./utils/ImagesCalculator.js")
 const GitControl = require("./utils/GitControl.js")
 
 const Dispatcher = require("./utils/Dispatcher.js")
-
-const fs = require("fs")
 
 async function run(){
 

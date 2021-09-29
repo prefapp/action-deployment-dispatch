@@ -1,10 +1,7 @@
 const jsYaml = require("js-yaml")
 
-const fs = require("fs")
-
 const DYNAMIC_VERSIONS = ["last_prerelease", "last_release"]
 
-const core = require("@actions/core")
 const github = require("@actions/github")
 
 const DeploymentValidator = require("./DeploymentValidator.js")
@@ -27,8 +24,6 @@ module.exports = class {
  
       return Buffer.from(data.content, "base64").toString('utf-8')
 
-      //core.info(`---------`)
-      //core.info(JSON.stringify(data, null, 4))
     })
 
   }

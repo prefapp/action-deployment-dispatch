@@ -1,4 +1,3 @@
-const core = require("@actions/core")
 const github = require("@actions/github")
 
 module.exports = class {
@@ -42,8 +41,6 @@ module.exports = class {
 
     
     })
-
- //   core.info(JSON.stringify(changes, null, 4))
 
     return changes.data.files.filter(fileChanged => fileChanged.filename == file).length >= 1
   }
