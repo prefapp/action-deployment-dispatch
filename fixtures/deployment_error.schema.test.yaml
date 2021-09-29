@@ -1,0 +1,18 @@
+tenant1:
+  app1:
+    dev:
+      service_name: [] # bad name
+
+tenant2:
+  app2:
+    dev:
+      service_names: 
+         - a: 1  # should be a string
+
+tenant3:
+  app3:
+    dev:
+      service_names:
+        - a
+        - b
+      version: "last_prerelease"

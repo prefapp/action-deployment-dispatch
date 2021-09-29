@@ -7,6 +7,8 @@ const DYNAMIC_VERSIONS = ["last_prerelease", "last_release"]
 const core = require("@actions/core")
 const github = require("@actions/github")
 
+const DeploymentValidator = require("./DeploymentValidator.js")
+
 module.exports = class {
  
   static FROM_MAIN(ctx){
@@ -140,6 +142,13 @@ module.exports = class {
     try{
 
       data = jsYaml.load(yamlData)
+
+      const errors = DeploymentValidator(data)
+
+      if( errors.length > 0){
+
+        throw errors.join("\n")
+      }
 
     }
     catch(err){

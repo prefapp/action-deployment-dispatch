@@ -39,7 +39,9 @@ test("Deployment analyzes and retrieves correctly the dispatches", () => {
 
       service_names: [ "hello" ],
 
-      type: "last_prerelease"
+      type: "last_prerelease",
+
+      flavour: undefined
     }
   
   ])
@@ -152,7 +154,7 @@ test("Deployment can render all the actions", function(){
             "env": "pre",
             "service_names": [ "client" ],
             "type": "last_release",
-            "flavour": undefined,
+            "flavour": "hello-flavour",
         },
         {
             "tenant": "tenant1",
