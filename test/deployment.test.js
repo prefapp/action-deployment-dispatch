@@ -6,7 +6,7 @@ test('Deployment loads correctly a deployment.yaml', () => {
 
   const deployment_data = fs.readFileSync("./fixtures/deployment.test.yaml")
 
-  const deployment = new Deployment(deployment_data).init()
+  new Deployment(deployment_data).init()
 
 })
 
@@ -16,7 +16,7 @@ test('Deployment controls an incorrect deployment.yaml', () => {
 
   expect(() => {
 
-    const deployment = new Deployment(deployment_data).init()
+    new Deployment(deployment_data).init()
 
   }).toThrow("Error loading yaml: YAMLException: bad indentation of a mapping entry (4:5)")
 
@@ -39,7 +39,9 @@ test("Deployment analyzes and retrieves correctly the dispatches", () => {
 
       service_names: [ "hello" ],
 
-      type: "last_prerelease"
+      type: "last_prerelease",
+
+      flavour: undefined
     }
   
   ])
@@ -152,7 +154,7 @@ test("Deployment can render all the actions", function(){
             "env": "pre",
             "service_names": [ "client" ],
             "type": "last_release",
-            "flavour": undefined,
+            "flavour": "hello-flavour",
         },
         {
             "tenant": "tenant1",

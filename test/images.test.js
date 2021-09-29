@@ -1,4 +1,4 @@
-const ImagesCalculator = require("../utils/ImagesCalculator.js")
+//const ImagesCalculator = require("../utils/ImagesCalculator.js")
 
 test('Images calculator works with normal images', () => {
 
