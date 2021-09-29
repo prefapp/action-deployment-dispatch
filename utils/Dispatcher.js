@@ -128,7 +128,14 @@ class DispatcherGithub{
 
         core.setFailed(
         
-          `Repository not found, OR token has insufficient permissions.`
+          `Repository not found.`
+        )
+      }
+      else if(error.status == 405){
+
+        core.setFailed(
+        
+          `Token has insufficient permissions.`
         )
       }
       else{
