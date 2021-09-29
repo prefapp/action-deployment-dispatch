@@ -54,7 +54,7 @@ module.exports = class {
 
     // We need to extract the image tag according to the type (main, label, pre_release...)
     // this function is a helper that really is calling ImageCalculator
-    const image = await this.ctx.images(action.type)
+    const image = await this.ctx.images(action.type, action.flavour)
 
     return {
 
@@ -150,7 +150,7 @@ class DispatcherMock{
 
   dispatch(eventPayload){
 
-    return this.test(deploymentEvent)
+    return this.test(eventPayload)
 
   }
 }

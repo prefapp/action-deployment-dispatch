@@ -12,11 +12,13 @@ tenant1:
       service_names: 
       - hello
       version: last_release
+      flavour: hello-flavour
 tenant2:
   release_paprika:
     pre:
       service_names: 
       - client
       version: last_release
+      flavour: hello-flavour
 
 

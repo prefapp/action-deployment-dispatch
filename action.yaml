@@ -19,8 +19,8 @@ inputs:
       [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
     required: true
   deployment_file:
-    description: "Name of the deployment file (default deployment.yaml)"
-    default: "deployment.yaml"
+    description: "Name of the deployment file (default .github/deployment.yaml)"
+    default: ".github/deployment.yaml"
   github_token:
     description: "The github token"
     default: ${{ github.token }}
@@ -30,6 +30,9 @@ inputs:
   dispatch_event_name:
     description: "The name of the event dispatch"
     default: "dispatch-image"
+  default_branch:
+    default: ${{ github.event.repository.master_branch }}
+    description: "The branch used as a reference for the deployment file"
 runs:
   using: 'node12'
   main: 'dist/index.js'
