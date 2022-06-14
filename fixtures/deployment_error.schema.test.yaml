@@ -1,7 +1,7 @@
 tenant1:
   app1:
     dev:
-      service_name: [] # bad name
+      - service_name: [] # bad name
 
 tenant2:
   app2:
@@ -12,7 +12,7 @@ tenant2:
 tenant3:
   app3:
     dev:
-      service_names:
+      - service_names:
         - a
         - b
-      version: "last_prerelease"
+        version: "last_prerelease"

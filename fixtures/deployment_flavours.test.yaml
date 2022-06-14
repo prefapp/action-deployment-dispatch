@@ -3,7 +3,12 @@ tenant1:
     dev:
       - service_names: 
         - hello
+        version: branch_main 
+        flavour: f1
+      - service_names: 
+        - hello2
         version: branch_main # branch name
+        flavour: f2
     pre:
       - service_names: 
         - hello
