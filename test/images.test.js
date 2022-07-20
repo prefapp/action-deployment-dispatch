@@ -20,8 +20,7 @@ test('Images calculator works with normal images', async () => {
 
     test: async (eventBody) => {
 
-      console.log("eventBody", eventBody)
-
+      console.log(eventBody)
 
       expect(eventBody).toMatchObject([
         {
