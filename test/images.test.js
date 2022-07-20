@@ -20,7 +20,41 @@ test('Images calculator works with normal images', async () => {
 
     test: async (eventBody) => {
 
-      console.log(eventBody)
+      console.log("eventBody", eventBody)
+
+
+      expect(eventBody).toMatchObject([
+        {
+          tenant: 'tenant1',
+          app: 'release_foo',
+          env: 'pre',
+          type: 'last_prerelease',
+          service_names: [ 'hello' ],
+          flavour: undefined,
+          image: 'test-service:last_prerelease_default',
+          reviewers: [ 'test@prefapp.es' ]
+        },
+        {
+          tenant: 'tenant1',
+          app: 'release_foo',
+          env: 'dev',
+          type: 'branch_main',
+          service_names: [ 'hello' ],
+          flavour: undefined,
+          image: 'test-service:branch_main_default',
+          reviewers: [ 'test@prefapp.es' ]
+        },
+        {
+          tenant: 'tenant1',
+          app: 'release_foo',
+          env: 'pro',
+          type: '1.0.1',
+          service_names: [ 'hello' ],
+          flavour: undefined,
+          image: 'test-service:1.0.1_default',
+          reviewers: [ 'test@prefapp.es' ]
+        }
+      ])
 
     },
 
@@ -35,7 +69,7 @@ test('Images calculator works with normal images', async () => {
       // mocks the images calculator
       images: async (action_type, flavour = "default") => {
 
-        return `${action_type}_${flavour}` 
+        return `${action_type}_${flavour}`
 
       }
 
@@ -45,7 +79,4 @@ test('Images calculator works with normal images', async () => {
 
   await dispatcher.dispatch()
 
-  expect(1 == 1)
-
 })
-
