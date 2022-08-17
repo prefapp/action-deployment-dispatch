@@ -81,7 +81,7 @@ async function run(){
   
     const changes = deployment.allActions()
 
-    new Dispatcher({actions: changes, ctx}).dispatch()
+    new Dispatcher({actions: changes, ctx, ensemble: false}).dispatch()
     
   }
   

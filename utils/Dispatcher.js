@@ -140,10 +140,6 @@ class DispatcherGithub{
       //
       const ocktoki_dispatcher = github.getOctokit(this.ctx.token)
 
-      core.info(`-------------------------------------`)
-      core.info(JSON.stringify(eventPayload))
-      core.info(`-------------------------------------`)
-
       await ocktoki_dispatcher.rest.repos.createDispatchEvent({
       
         owner: this.ctx.owner,
