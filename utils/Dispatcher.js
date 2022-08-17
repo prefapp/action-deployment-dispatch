@@ -122,6 +122,11 @@ class DispatcherGithub{
 
     try {
 
+      core.info(`-------------------------------------`)
+      core.info(JSON.stringify(eventPayload))
+
+      core.info(`-------------------------------------`)
+
       core.info(JSON.stringify({
       
         owner: this.ctx.owner,
