@@ -3,7 +3,6 @@ const github = require('@actions/github');
 
 const Deployment = require("./utils/Deployment.js")
 const ImagesCalculator = require("./utils/ImagesCalculator.js")
-const GitControl = require("./utils/GitControl.js")
 
 const Dispatcher = require("./utils/Dispatcher.js")
 
@@ -58,5 +57,15 @@ async function run(){
 
   return new Dispatcher({actions: changes, ctx}).dispatch()
 }
+
+async function loadDeployment(ctx){
+
+  const file = await Deployment.FROM_MAIN(ctx)
+
+  core.info( file )
+
+  return new Deployment( file ).init()
+}
+
 
 run()
