@@ -22,38 +22,42 @@ test('Images calculator works with normal images', async () => {
 
       console.log(eventBody)
 
-      expect(eventBody).toMatchObject([
-        {
-          tenant: 'tenant1',
-          app: 'release_foo',
-          env: 'pre',
-          type: 'last_prerelease',
-          service_names: [ 'hello' ],
-          flavour: undefined,
-          image: 'test-service:last_prerelease_default',
-          reviewers: [ 'test@prefapp.es' ]
-        },
-        {
-          tenant: 'tenant1',
-          app: 'release_foo',
-          env: 'dev',
-          type: 'branch_main',
-          service_names: [ 'hello' ],
-          flavour: undefined,
-          image: 'test-service:branch_main_default',
-          reviewers: [ 'test@prefapp.es' ]
-        },
-        {
-          tenant: 'tenant1',
-          app: 'release_foo',
-          env: 'pro',
-          type: '1.0.1',
-          service_names: [ 'hello' ],
-          flavour: undefined,
-          image: 'test-service:1.0.1_default',
-          reviewers: [ 'test@prefapp.es' ]
-        }
-      ])
+      expect(eventBody).toMatchObject({
+
+        images: [
+          {
+            tenant: 'tenant1',
+            app: 'release_foo',
+            env: 'pre',
+            type: 'last_prerelease',
+            service_names: [ 'hello' ],
+            flavour: undefined,
+            image: 'test-service:last_prerelease_default',
+            reviewers: [ 'test@prefapp.es' ]
+          },
+          {
+            tenant: 'tenant1',
+            app: 'release_foo',
+            env: 'dev',
+            type: 'branch_main',
+            service_names: [ 'hello' ],
+            flavour: undefined,
+            image: 'test-service:branch_main_default',
+            reviewers: [ 'test@prefapp.es' ]
+          },
+          {
+            tenant: 'tenant1',
+            app: 'release_foo',
+            env: 'pro',
+            type: '1.0.1',
+            service_names: [ 'hello' ],
+            flavour: undefined,
+            image: 'test-service:1.0.1_default',
+            reviewers: [ 'test@prefapp.es' ]
+          }
+        ]
+
+      })
 
     },
 
