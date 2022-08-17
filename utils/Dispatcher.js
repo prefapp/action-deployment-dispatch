@@ -53,7 +53,7 @@ module.exports = class {
 
     }
 
-    await this.__dispatchEvent(payload)
+    await this.__dispatchEvent({images: payload})
 
   }
 

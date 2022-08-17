@@ -12396,7 +12396,7 @@ module.exports = class {
 
     }
 
-    await this.__dispatchEvent(payload)
+    await this.__dispatchEvent({images: payload})
 
   }
 
@@ -12932,7 +12932,7 @@ async function run(){
   
     const changes = deployment.allActions()
 
-    new Dispatcher({actions: changes, ctx, ensemble: false}).dispatch()
+    new Dispatcher({actions: changes, ctx}).dispatch()
     
   }
   
