@@ -51,103 +51,12 @@ async function run(){
   
   }
 
-  //core.info(JSON.stringify(github.context.payload.pull_request.head, null, 4))
-
-  //
-  // we check if there were changes on the deployments file. 
-  // If that is the case, we dispatch ALL its content
-  //
-  if( ctx.triggered_event == "push" ){
- 
-    const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
+  // we process now all changes
+  const deployment = await loadDeployment(ctx)
   
-    if( deploymentFileHasChanges ) {
+  const changes = deployment.allActions()
 
-      return processDeploymentFileWithChanges(ctx)
-    
-    }
-  }
-
-  //
-  // We process the normal event
-  //
-  return processEvent(ctx)
+  return new Dispatcher({actions: changes, ctx}).dispatch()
 }
 
-  async function processDeploymentFileWithChanges(ctx){
-
-    // load the deployments
-    const deployment = await loadDeployment(ctx)
-  
-    const changes = deployment.allActions()
-
-    new Dispatcher({actions: changes, ctx}).dispatch()
-    
-  }
-  
-  async function processEvent(ctx){
-   
-    // load the deployments
-    const deployment = await loadDeployment(ctx)
-
-    // get changes based on type of trigger
-    let changes = false
-
-    switch(ctx.triggered_event){
-
-      case "release":
-
-        if( github.context.payload.release.prerelease ){
-        
-          changes = deployment.parse("last_prerelease")
-        
-        }
-        else{
-
-          changes = deployment.parse("last_release")
-
-        }
-
-        break
-
-      default: 
-
-        //we take the branch
-        if( ctx.triggered_event == "push"){
-          
-          const branch = github.context.payload.ref.replace(/^refs\/heads\//, "")
-          
-          core.info(branch)
-
-          changes = deployment.parse(`branch_${branch}`)
-
-        }
-        else if( ctx.triggered_event == "pull_request"){
-
-          const branch = github.context.payload.pull_request.head.ref
-          
-          core.info(branch)
-
-          changes = deployment.parse(`branch_${branch}`)
-        }
-      
-        
-    }
-
-    new Dispatcher({actions: changes, ctx}).dispatch()
-
-  }
-
-    //
-    // Loads the deployments file (as it is defined on inputs.deployment_file)
-    //
-    async function loadDeployment(ctx){
-
-      const file = await Deployment.FROM_MAIN(ctx)
-
-      core.info( file )
-
-      return new Deployment( file ).init()
-    }
-  
 run()
