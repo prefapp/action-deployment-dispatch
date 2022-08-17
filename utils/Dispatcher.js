@@ -122,10 +122,6 @@ class DispatcherGithub{
 
     try {
 
-      core.info(`-------------------------------------`)
-      core.info(JSON.stringify(eventPayload))
-
-      core.info(`-------------------------------------`)
 
       core.info(JSON.stringify({
       
@@ -143,6 +139,10 @@ class DispatcherGithub{
       // We create another client for using the special token
       //
       const ocktoki_dispatcher = github.getOctokit(this.ctx.token)
+
+      core.info(`-------------------------------------`)
+      core.info(JSON.stringify(eventPayload))
+      core.info(`-------------------------------------`)
 
       await ocktoki_dispatcher.rest.repos.createDispatchEvent({
       
