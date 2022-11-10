@@ -70,23 +70,14 @@ module.exports = async function({action_type, flavour="default"}, ctx, mock){
 
   function __last_prerelease(octokit, ctx){
 
-    return octokit.rest.repos.listReleases({
-    
-      owner: ctx.owner,
+    return __getReleases(octokit, ctx)
 
-      repo: ctx.repo
+      .then(rr => rr.data.filter(r => r.prerelease)) // by prereleases
 
-    }).then((rr) => {
- 
-      return rr.data.filter(r => r.prerelease)[0]
+      .then(prereleases => __sortReleasesByTime(prereleases)[0]) // order by time (get the latest)
 
-    }).then((r) => {
-    
-      if( r ) return r.tag_name
+      .then(prerelease => prerelease ? prerelease.tag_name: name) // get the tag name
 
-      return null
-    })
-    
   }
 
   function __last_release_filtered(octokit, ctx, action_type){
