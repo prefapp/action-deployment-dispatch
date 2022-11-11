@@ -44,6 +44,50 @@ function mockRelease({tag_name, created_at, prerelease}){
   }
 }
 
+test("Images calculator works with prereleases", async () => {
+
+  const MOCK_OCKTOKIT = {
+
+    rest: {
+
+      repos: {
+
+        async listReleases(){
+
+          return { 
+
+            data: [
+
+              mockRelease({tag_name: "v1.0.2-pre", prerelease: true, created_at: "2013-02-25T19:35:32Z"}),
+              mockRelease({tag_name: "v2.0", prerelease: false, created_at: "2013-02-27T19:35:32Z"}),
+              mockRelease({tag_name: "v1.0.5-pre", prerelease: true, created_at: "2013-02-27T19:35:32Z"}),
+              mockRelease({tag_name: "v1.0.5-pre-1", prerelease: true, created_at: "2013-02-25T19:45:32Z"}),
+              mockRelease({tag_name: "v0.0.5-pre", prerelease: true, created_at: "2013-01-27T19:35:32Z"}),
+
+            ] 
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+  return ImagesCalculator({
+
+    action_type: "last_prerelease",
+
+  }, MOCK_OCKTOKIT, true)
+
+    .then(tag => expect(tag).toEqual("v1.0.5-pre_default"))
+
+    .catch(e => console.error(e))
+
+
+})
+
 test('Images calculator works with filter for prereleases', () => {
 
   const MOCK_OCKTOKIT = {
@@ -54,17 +98,17 @@ test('Images calculator works with filter for prereleases', () => {
 
         async listReleases(){
 
-	  return { 
+          return { 
 
-	    data: [
+            data: [
 
-	    	mockRelease({tag_name: "v1.0.2-pre", prerelease: true, created_at: "2013-02-25T19:35:32Z"}),
-	    	mockRelease({tag_name: "v2.0", prerelease: false, created_at: "2013-02-27T19:35:32Z"}),
-	    	mockRelease({tag_name: "v1.0.5-pre", prerelease: true, created_at: "2013-02-27T19:35:32Z"}),
-	    	mockRelease({tag_name: "v0.0.5-pre", prerelease: true, created_at: "2013-01-27T19:35:32Z"}),
+              mockRelease({tag_name: "v1.0.2-pre", prerelease: true, created_at: "2013-02-25T19:35:32Z"}),
+              mockRelease({tag_name: "v2.0", prerelease: false, created_at: "2013-02-27T19:35:32Z"}),
+              mockRelease({tag_name: "v1.0.5-pre", prerelease: true, created_at: "2013-02-27T19:35:32Z"}),
+              mockRelease({tag_name: "v0.0.5-pre", prerelease: true, created_at: "2013-01-27T19:35:32Z"}),
 
-	    ] 
-	  }
+            ] 
+          }
 
         }
 
@@ -75,15 +119,15 @@ test('Images calculator works with filter for prereleases', () => {
   }
 
   ImagesCalculator({
-   
+
     action_type: "last_prerelease_v1.0.x",
-   
+
   }, MOCK_OCKTOKIT, true)
 
-  	.then(tag => expect(tag === "v1.0.5-pre"))
+    .then(tag => expect(tag).toEqual("v1.0.5-pre_default"))
 
-	.catch(e => console.error(e))
-  
+    .catch(e => console.error(e))
+
 })
 
 test('Images calculator works with filter for releases', () => {
@@ -96,18 +140,18 @@ test('Images calculator works with filter for releases', () => {
 
         async listReleases(){
 
-	  return { 
+          return { 
 
-	    data: [
+            data: [
 
-	    	mockRelease({tag_name: "v2.1", prerelease: false, created_at: "2013-02-28T19:35:32Z"}),
-	    	mockRelease({tag_name: "v1.0.2-pre", prerelease: true, created_at: "2013-02-25T19:35:32Z"}),
-	    	mockRelease({tag_name: "v2.0", prerelease: false, created_at: "2013-02-27T19:35:32Z"}),
-	    	mockRelease({tag_name: "v1.0.5-pre", prerelease: true, created_at: "2013-02-27T19:35:32Z"}),
-	    	mockRelease({tag_name: "v0.0.5-pre", prerelease: true, created_at: "2013-01-27T19:35:32Z"}),
+              mockRelease({tag_name: "v2.1", prerelease: false, created_at: "2013-02-28T19:35:32Z"}),
+              mockRelease({tag_name: "v1.0.2-pre", prerelease: true, created_at: "2013-02-25T19:35:32Z"}),
+              mockRelease({tag_name: "v2.0", prerelease: false, created_at: "2013-02-27T19:35:32Z"}),
+              mockRelease({tag_name: "v1.0.5-pre", prerelease: true, created_at: "2013-02-27T19:35:32Z"}),
+              mockRelease({tag_name: "v0.0.5-pre", prerelease: true, created_at: "2013-01-27T19:35:32Z"}),
 
-	    ] 
-	  }
+            ] 
+          }
 
         }
 
@@ -118,13 +162,13 @@ test('Images calculator works with filter for releases', () => {
   }
 
   ImagesCalculator({
-   
+
     action_type: "last_release_v2.x",
-   
+
   }, MOCK_OCKTOKIT, true)
 
-  	.then(tag => expect(tag === "v2.1"))
+    .then(tag => expect(tag).toEqual("v2.1_default"))
 
-	.catch(e => console.error(e))
-  
+    .catch(e => console.error(e))
+
 })
