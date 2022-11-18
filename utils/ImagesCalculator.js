@@ -1,9 +1,9 @@
 const github = require("@actions/github")
 
 // String regexps
-const FILTERED_RELEASE = new RegExp(/^last_release_(\w+)/)
+const FILTERED_RELEASE = new RegExp(/^last_release_(v)?\d+\.([\d\.-\w])*x/)
 
-const FILTERED_PRERELEASE = new RegExp(/^last_prerelease_(\w+)/)
+const FILTERED_PRERELEASE = new RegExp(/^last_prerelease_(v)?\d+\.([\d\.-\w])*x/)
 
 // is the action a filter?
 function isFilteredReleaseOrPrerelease(action_type){
