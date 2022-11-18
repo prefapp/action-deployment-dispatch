@@ -5,6 +5,11 @@ const FILTERED_RELEASE = new RegExp(/^last_release_(\w+)/)
 
 const FILTERED_PRERELEASE = new RegExp(/^last_prerelease_(\w+)/)
 
+// is the action a filter?
+function isFilteredReleaseOrPrerelease(action_type){
+  return new RegExp(/^(last_release_|last_prerelease_)/).test(action_type)
+}
+
 // Utility function to escape special chars and compile into a RegExp dynamically
 function utilRegEscape(string) {
   return string.replace(/[-/^$*+?.()|[\]{}]/g, '\\$&')
@@ -31,14 +36,21 @@ function __calculateImage(action_type, ctx, mock){
 
     case "last_prerelease":
       return __last_prerelease(octokit, ctx)
+
     case "last_release":
       return __last_release(octokit, ctx)
+
     default:
-      if(FILTERED_PRERELEASE.test(action_type)){
-        return __last_prerelease_filtered(octokit, ctx, action_type)
-      }        
-      else if(FILTERED_RELEASE.test(action_type)){
-        return __last_release_filtered(octokit, ctx, action_type)
+      if(isFilteredReleaseOrPrerelease(action_type)){
+        if(FILTERED_PRERELEASE.test(action_type)){
+          return __last_prerelease_filtered(octokit, ctx, action_type)
+        }        
+        else if(FILTERED_RELEASE.test(action_type)){
+          return __last_release_filtered(octokit, ctx, action_type)
+        }
+        else{
+          throw `Syntax error on action_type: ${action_type}`
+        }
       }
       if(action_type.match(/^branch_/)){
 
