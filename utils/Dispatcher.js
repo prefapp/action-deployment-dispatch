@@ -53,9 +53,37 @@ module.exports = class {
 
     }
 
-    await this.__dispatchEvent({images: payload, version: 4})
+    const expanded_payload = this.__expandPayload(payload)
+
+    await this.__dispatchEvent({images: expanded_payload, version: 4})
 
   }
+
+    __expandPayload(payload){
+
+      const expanded = []
+
+      payload.forEach((imagePayload) => {
+
+        imagePayload.service_names.forEach((service_name) => {
+
+          expanded.push({
+
+            tenant: imagePayload.tenant,
+            app: imagePayload.app,
+            env: imagePayload.env,
+            image: imagePayload.image,
+            service_name,
+            reviewers: imagePayload.reviewers
+
+          })
+
+        })
+
+      })
+
+      return expanded
+    }
 
   async __individualDispach(){
 

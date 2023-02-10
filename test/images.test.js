@@ -29,9 +29,7 @@ test('Images calculator works with normal images', async () => {
             tenant: 'tenant1',
             app: 'release_foo',
             env: 'pre',
-            type: 'last_prerelease',
-            service_names: [ 'hello' ],
-            flavour: undefined,
+            service_name: 'hello',
             image: 'test-service:last_prerelease_default',
             reviewers: [ 'test@prefapp.es' ]
           },
@@ -39,9 +37,7 @@ test('Images calculator works with normal images', async () => {
             tenant: 'tenant1',
             app: 'release_foo',
             env: 'dev',
-            type: 'branch_main',
-            service_names: [ 'hello' ],
-            flavour: undefined,
+            service_name: 'hello',
             image: 'test-service:branch_main_default',
             reviewers: [ 'test@prefapp.es' ]
           },
@@ -49,9 +45,7 @@ test('Images calculator works with normal images', async () => {
             tenant: 'tenant1',
             app: 'release_foo',
             env: 'pro',
-            type: '1.0.1',
-            service_names: [ 'hello' ],
-            flavour: undefined,
+            service_name:  'hello',
             image: 'test-service:1.0.1_default',
             reviewers: [ 'test@prefapp.es' ]
           }
