@@ -124,6 +124,36 @@ test("Deployment is able to make a diff with another deployment", function(){
 
 })
 
+test("Deployment can render different flavours", function(){
+
+  const deployment_data = fs.readFileSync("./fixtures/deployment_flavours.test.yaml")
+
+  const deployment = new Deployment(deployment_data).init()
+
+  expect(deployment.parse("branch_main")).toMatchObject([
+
+       {
+            "tenant": "tenant1",
+            "app": "release_foo",
+            "env": "dev",
+            "service_names": [ "hello" ],
+            "type": "branch_main",
+            "flavour": "f1",
+        },
+
+       {
+            "tenant": "tenant1",
+            "app": "release_foo",
+            "env": "dev",
+            "service_names": [ "hello2" ],
+            "type": "branch_main",
+            "flavour": "f2",
+        },
+
+  ])
+
+})
+
 test("Deployment can render all the actions", function(){
 
   const deployment_data = fs.readFileSync("./fixtures/deployment.test.yaml")

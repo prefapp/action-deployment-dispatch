@@ -41,9 +41,23 @@ const AppSchema = {
 
     "^.+$": {
 
-      "$ref": "/env-schema"
+      "$ref": "/env-schema-list"
     }
   }
+
+}
+
+const EnvSchemaList = {
+
+  id: "/env-schema-list",
+
+  type: "array",
+
+  items: {
+
+    "$ref": "/env-schema"
+  }
+    
 
 }
 
@@ -88,8 +102,9 @@ module.exports = function(data){
   const v = new Validator()
 
   v.addSchema(EnvSchema)
+  v.addSchema(EnvSchemaList)
   v.addSchema(AppSchema)
   v.addSchema(TenantSchema)
-  
+ 
   return v.validate(data, DeploymentsSchema).errors
 }
