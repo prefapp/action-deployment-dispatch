@@ -12703,7 +12703,7 @@ module.exports = async function({action_type, flavour="default"}, ctx){
 
     }).catch((err) => {
 
-      throw `calculating last commit: ${err}`
+      throw `calculating last commit on branch ${branch}: ${err}`
 
     })
 
