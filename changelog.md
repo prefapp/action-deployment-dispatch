@@ -1,5 +1,6 @@
-# Unreleased
+# v4
 
+- Integrate v3
 - Change trigger and images calcultation model [issue](https://github.com/prefapp/action-deployment-dispatch/issues/19) [branch](https://github.com/prefapp/action-deployment-dispatch/tree/feature/ensemble-dispatch)
 
 # v3

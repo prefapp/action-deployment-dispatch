@@ -12369,13 +12369,15 @@ const github = __nccwpck_require__(5438)
 
 module.exports = class {
 
-  constructor({actions, test = false, ctx}){
+  constructor({actions, test = false, ctx, ensemble = true}){
 
     this.actions = actions
 
     this.ctx = ctx
 
     this.__onTest = test
+
+    this.__onEnsemble = ensemble
 
     this.__dispatcher = (test) ? 
       
@@ -12392,6 +12394,64 @@ module.exports = class {
   //
   async dispatch(){
 
+    if(this.__onEnsemble)
+      await this.__ensembleDispatch()
+    else
+      await this.__individualDispach()
+
+  }
+
+  async __ensembleDispatch(){
+
+    const payload = []
+
+    for( const action of this.actions ){
+
+      const deploymentEvent = await this.__preparePayload(action)
+
+      core.info(JSON.stringify(deploymentEvent, null, 4))
+
+      payload.push(deploymentEvent)
+
+    }
+
+    const expanded_payload = this.__expandPayload(payload)
+
+    await this.__dispatchEvent({images: expanded_payload, version: 4})
+
+  }
+
+    __expandPayload(payload){
+
+      const expanded = []
+
+      payload.forEach((imagePayload) => {
+
+        imagePayload.service_names.forEach((service_name) => {
+
+          expanded.push({
+
+            tenant: imagePayload.tenant,
+            app: imagePayload.app,
+            env: imagePayload.env,
+            image: imagePayload.image,
+            service_name,
+            reviewers: imagePayload.reviewers
+
+          })
+
+        })
+
+      })
+
+      return expanded
+    }
+
+  async __individualDispach(){
+
+    // waitTime differs according to the context (test or production)
+    const waitTime = this.__onTest ? 0.5 : 10
+
     core.info(JSON.stringify(this.actions, null, 4))
 
     for( const action of this.actions ){
@@ -12402,7 +12462,7 @@ module.exports = class {
 
       await this.__dispatchEvent(deploymentEvent)
 
-      await this.__wait(10) // 10 seg
+      await this.__wait(waitTime) 
 
     }
   }
@@ -12451,6 +12511,7 @@ class DispatcherGithub{
   async dispatch(eventPayload){
 
     try {
+
 
       core.info(JSON.stringify({
       
@@ -12527,61 +12588,6 @@ class DispatcherMock{
 
 /***/ }),
 
-/***/ 1997:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const github = __nccwpck_require__(5438)
-
-module.exports = class {
-
-  constructor({ctx}){
-
-    this.octokit = github.getOctokit(ctx.github_token)
-
-    this.ctx = ctx
-  }
-
-  async deploymentHasChanges(){
-
-    //
-    // Deployments.yaml can only be change through a PR
-    //
-    if( !this.ctx.triggered_event == "push" )
-      return false
-
-    //
-    // We only take into account changes of the master branch
-    //
-    const current_branch = github.context.ref.replace("refs/heads/", "")
-
-    if( current_branch !== this.ctx.master_branch )
-      return false
-
-    return this.fileHasChanges(this.ctx.deployment_file)
-
-  }
-
-  async fileHasChanges(file){
-
-    const changes = await this.octokit.rest.repos.compareCommitsWithBasehead({
-    
-      owner: this.ctx.owner,
-
-      repo: this.ctx.repo,
-
-      basehead: github.context.payload.compare.replace(/.+compare\//, "")
-
-    
-    })
-
-    return changes.data.files.filter(fileChanged => fileChanged.filename == file).length >= 1
-  }
-
-}
-
-
-/***/ }),
-
 /***/ 6638:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -12589,14 +12595,23 @@ const github = __nccwpck_require__(5438)
 
 module.exports = async function({action_type, flavour="default"}, ctx){
 
-  const image = await __calculateImage(action_type, ctx)
+  try{
 
-  if(flavour){
-    return `${image}_${flavour}`
+    const image = await __calculateImage(action_type, ctx)
+
+    if(flavour){
+      return `${image}_${flavour}`
+    }
+    else{
+      return image
+    }
+
   }
-  else{
-    return image
+  catch(err){
+
+    throw `Calculating image: ${err}: ${err.stack}`
   }
+
 
 }
 
@@ -12635,6 +12650,10 @@ module.exports = async function({action_type, flavour="default"}, ctx){
  
       return r.data.tag_name
 
+    }).catch((err) => {
+
+      throw `calculating last release: ${err}`
+
     })
     
   }
@@ -12656,6 +12675,11 @@ module.exports = async function({action_type, flavour="default"}, ctx){
       if( r ) return r.tag_name
 
       return null
+
+    }).catch((err) => {
+
+      throw `calculating last pre-release: ${err}`
+
     })
     
   }
@@ -12676,6 +12700,10 @@ module.exports = async function({action_type, flavour="default"}, ctx){
       // we only use the first 8 chars of the commit's SHA for tagging
       //
       return b.data.commit.sha.substring(0, 7) 
+
+    }).catch((err) => {
+
+      throw `calculating last commit: ${err}`
 
     })
 
@@ -12840,7 +12868,6 @@ const github = __nccwpck_require__(5438);
 
 const Deployment = __nccwpck_require__(6990)
 const ImagesCalculator = __nccwpck_require__(6638)
-const GitControl = __nccwpck_require__(1997)
 
 const Dispatcher = __nccwpck_require__(1955)
 
@@ -12888,105 +12915,24 @@ async function run(){
   
   }
 
-  //core.info(JSON.stringify(github.context.payload.pull_request.head, null, 4))
-
-  //
-  // we check if there were changes on the deployments file. 
-  // If that is the case, we dispatch ALL its content
-  //
-  if( ctx.triggered_event == "push" ){
- 
-    const deploymentFileHasChanges = await new GitControl({ctx}).deploymentHasChanges()
+  // we process now all changes
+  const deployment = await loadDeployment(ctx)
   
-    if( deploymentFileHasChanges ) {
+  const changes = deployment.allActions()
 
-      return processDeploymentFileWithChanges(ctx)
-    
-    }
-  }
-
-  //
-  // We process the normal event
-  //
-  return processEvent(ctx)
+  return new Dispatcher({actions: changes, ctx}).dispatch()
 }
 
-  async function processDeploymentFileWithChanges(ctx){
+async function loadDeployment(ctx){
 
-    // load the deployments
-    const deployment = await loadDeployment(ctx)
-  
-    const changes = deployment.allActions()
+  const file = await Deployment.FROM_MAIN(ctx)
 
-    new Dispatcher({actions: changes, ctx}).dispatch()
-    
-  }
-  
-  async function processEvent(ctx){
-   
-    // load the deployments
-    const deployment = await loadDeployment(ctx)
+  core.info( file )
 
-    // get changes based on type of trigger
-    let changes = false
+  return new Deployment( file ).init()
+}
 
-    switch(ctx.triggered_event){
 
-      case "release":
-
-        if( github.context.payload.release.prerelease ){
-        
-          changes = deployment.parse("last_prerelease")
-        
-        }
-        else{
-
-          changes = deployment.parse("last_release")
-
-        }
-
-        break
-
-      default: 
-
-        //we take the branch
-        if( ctx.triggered_event == "push"){
-          
-          const branch = github.context.payload.ref.replace(/^refs\/heads\//, "")
-          
-          core.info(branch)
-
-          changes = deployment.parse(`branch_${branch}`)
-
-        }
-        else if( ctx.triggered_event == "pull_request"){
-
-          const branch = github.context.payload.pull_request.head.ref
-          
-          core.info(branch)
-
-          changes = deployment.parse(`branch_${branch}`)
-        }
-      
-        
-    }
-
-    new Dispatcher({actions: changes, ctx}).dispatch()
-
-  }
-
-    //
-    // Loads the deployments file (as it is defined on inputs.deployment_file)
-    //
-    async function loadDeployment(ctx){
-
-      const file = await Deployment.FROM_MAIN(ctx)
-
-      core.info( file )
-
-      return new Deployment( file ).init()
-    }
-  
 run()
 
 })();
