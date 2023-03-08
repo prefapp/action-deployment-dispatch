@@ -173,29 +173,33 @@ module.exports = class {
 
         for(const env in this.data[tenant][app]){
 
-          const versionType =  this.data[tenant][app][env].version 
+          for(const deploy of this.data[tenant][app][env]){
 
-          if( ! actions[versionType] )
-            actions[versionType] = []
+            const versionType =  deploy.version 
 
-          actions[versionType].push((type) => {
-          
-            return {
+            if( ! actions[versionType] )
+              actions[versionType] = []
+
+            actions[versionType].push((type) => {
+            
+              return {
   
-              tenant,
+                tenant,
 
-              app,
+                app,
 
-              env,
+                env,
 
-              type,
+                type,
 
-              service_names: this.data[tenant][app][env].service_names,
+                service_names: deploy.service_names,
 
-              flavour: this.data[tenant][app][env].flavour
+                flavour: deploy.flavour
 
-            }
-          })
+              }
+            })
+
+          }
 
         }
 
