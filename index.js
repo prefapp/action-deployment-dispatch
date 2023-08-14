@@ -8,6 +8,8 @@ const Dispatcher = require("./utils/Dispatcher.js")
 
 async function run(){
 
+  process.env["DEBUG"] = "prefapp:*"
+
   //
   // We create a context to pass to other parts of the system
   //
