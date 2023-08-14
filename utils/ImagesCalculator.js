@@ -1,6 +1,10 @@
 const github = require("@actions/github")
 
+const debug = require("debug")("prefapp:dispatch:image-calculator")
+
 module.exports = async function({action_type, flavour="default"}, ctx){
+
+  debug(`Calculating image for ${action_type} and ${flavour}`)
 
   const image = await __calculateImage(action_type, ctx)
 
@@ -45,6 +49,10 @@ module.exports = async function({action_type, flavour="default"}, ctx){
       repo: ctx.repo
 
     }).then((r) => {
+
+      debug(`Obtained the following ${r}`)
+
+      debug(`Obtained the following tag_name: ${tag_name}`)
  
       return r.data.tag_name
 
@@ -65,6 +73,11 @@ module.exports = async function({action_type, flavour="default"}, ctx){
       return rr.data.filter(r => r.prerelease)[0]
 
     }).then((r) => {
+
+
+      debug(`Obtained the following ${r}`)
+
+      debug(`Obtained the following tag_name: ${r}`)
     
       if( r ) return r.tag_name
 
