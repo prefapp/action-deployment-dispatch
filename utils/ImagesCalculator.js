@@ -1,10 +1,10 @@
 const github = require("@actions/github")
 
-const debug = require("debug")("prefapp:dispatch:image_calculator")
+const core = require('@actions/core');
 
 module.exports = async function({action_type, flavour="default"}, ctx){
 
-  debug(`Calculating image for action_type ${action_type} and flavour ${flavour}`)
+  core.info(`Calculating image for action_type ${action_type} and flavour ${flavour}`)
 
   try{
 
@@ -79,13 +79,13 @@ module.exports = async function({action_type, flavour="default"}, ctx){
 
     }).then((rr) => {
 
-      debug(`${rr}`)
+      core.info(JSON.stringify(rr, null, 2))
  
       return rr.data.filter(r => r.prerelease)[0]
 
     }).then((r) => {
    
-      debug(`${r}`)
+      core.info(JSON.stringify(r, null, 2))
 
       if( r ) return r.tag_name
 
