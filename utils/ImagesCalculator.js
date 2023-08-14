@@ -52,7 +52,7 @@ module.exports = async function({action_type, flavour="default"}, ctx){
 
       debug(`Obtained the following ${r}`)
 
-      debug(`Obtained the following tag_name: ${tag_name}`)
+      debug(`Obtained the following tag_name: ${r.data.tag_name}`)
  
       return r.data.tag_name
 
