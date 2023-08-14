@@ -12651,6 +12651,8 @@ module.exports = async function({action_type, flavour="default"}, ctx){
       repo: ctx.repo
 
     }).then((r) => {
+
+      core.info(JSON.stringify(r, null, 2))
  
       return r.data.tag_name
 
