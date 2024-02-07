@@ -1,8 +1,23 @@
 const github = require("@actions/github")
 
-module.exports = async function({action_type, flavour="default"}, ctx){
+// String regexps
+const FILTERED_RELEASE = new RegExp(/^last_release_(v)?\d+\.([\d.-\w])*x/)
 
-  const image = await __calculateImage(action_type, ctx)
+const FILTERED_PRERELEASE = new RegExp(/^last_prerelease_(v)?\d+\.([\d.-\w])*x/)
+
+// is the action a filter?
+function isFilteredReleaseOrPrerelease(action_type){
+  return new RegExp(/^(last_release_|last_prerelease_)/).test(action_type)
+}
+
+// Utility function to escape special chars and compile into a RegExp dynamically
+function utilRegEscape(string) {
+  return string.replace(/[-/^$*+?.()|[\]{}]/g, '\\$&')
+}
+
+module.exports = async function({action_type, flavour="default"}, ctx, mock){
+
+  const image = await __calculateImage(action_type, ctx, mock)
 
   if(flavour){
     return `${image}_${flavour}`
@@ -13,83 +28,158 @@ module.exports = async function({action_type, flavour="default"}, ctx){
 
 }
 
-  function __calculateImage(action_type, ctx){
+function __calculateImage(action_type, ctx, mock){
 
-    const octokit = github.getOctokit(ctx.github_token)
-  
-    switch(action_type){
-  
-      case "last_prerelease":
-        return __last_prerelease(octokit, ctx)
-      case "last_release":
-        return __last_release(octokit, ctx)
-      default:
-        if(action_type.match(/^branch_/)){
-  
-          return __last_branch_commit(action_type, octokit, ctx)
+  const octokit = (mock) ? ctx : github.getOctokit(ctx.github_token)
+
+  switch(action_type){
+
+    case "last_prerelease":
+      return __last_prerelease(octokit, ctx)
+
+    case "last_release":
+      return __last_release(octokit, ctx)
+
+    default:
+      if(isFilteredReleaseOrPrerelease(action_type)){
+        if(FILTERED_PRERELEASE.test(action_type)){
+          return __last_prerelease_filtered(octokit, ctx, action_type)
+        }        
+        else if(FILTERED_RELEASE.test(action_type)){
+          return __last_release_filtered(octokit, ctx, action_type)
         }
         else{
-  
-          return action_type
+          throw `Syntax error on action_type: ${action_type}`
         }
-    }
+      }
+      if(action_type.match(/^branch_/)){
+
+        return __last_branch_commit(action_type, octokit, ctx)
+      }
+      else{
+
+        return action_type
+      }
   }
+}
 
 
-  function __last_release(octokit, ctx){
+function __last_release(octokit, ctx){
 
-    return octokit.rest.repos.getLatestRelease({
-    
-      owner: ctx.owner,
+  return octokit.rest.repos.getLatestRelease({
 
-      repo: ctx.repo
+    owner: ctx.owner,
 
-    }).then((r) => {
- 
-      return r.data.tag_name
+    repo: ctx.repo
+
+  }).then((r) => {
+
+    return r.data.tag_name
+
+  })
+
+}
+
+function __last_prerelease(octokit, ctx){
+
+  return __getReleases(octokit, ctx)
+
+    .then(rr => rr.data.filter(r => r.prerelease)) // by prereleases
+
+    .then((prereleases) =>{
+
+      return __sortReleasesByTime(prereleases)[0]
+    }) // order by time (get the latest)
+
+    .then(prerelease => prerelease ? prerelease.tag_name: null) // get the tag name
+
+}
+
+function __last_release_filtered(octokit, ctx, action_type){
+
+  // we prepare the filter
+  // is a regexp with the special part of .x replaced with .+ (any char)
+  // thus last_prerelease_1.x => /^1.\.+/
+  const filter_reg = new RegExp('^' + utilRegEscape(action_type.replace(/last_release_/, '').replace(/x/, '')))
+
+  return __getReleases(octokit, ctx)
+
+    .then(rr => rr.data.filter(r => !r.prerelease)) // by prereleases
+
+  // match the filter
+    .then((releases) => {
+
+      return releases.filter(r => filter_reg.test(r.tag_name)) 
 
     })
-    
-  }
 
-  function __last_prerelease(octokit, ctx){
+    .then(releases => __sortReleasesByTime(releases)[0]) // order by time (get the latest)
 
-    return octokit.rest.repos.listReleases({
-    
-      owner: ctx.owner,
+    .then(release => release.tag_name) // get the tag name
 
-      repo: ctx.repo
+}
 
-    }).then((rr) => {
- 
-      return rr.data.filter(r => r.prerelease)[0]
+function __last_prerelease_filtered(octokit, ctx, action_type){
 
-    }).then((r) => {
-    
-      if( r ) return r.tag_name
+  // we prepare the filter
+  // is a regexp with the special part of .x replaced with .+ (any char)
+  // thus last_prerelease_1.x => /^1.\.+/
+  const filter_reg = new RegExp('^' + utilRegEscape(action_type.replace(/last_prerelease_/, '').replace(/x/, '')))
 
-      return null
-    })
-    
-  }
+  return __getReleases(octokit, ctx)
 
-  function __last_branch_commit(branch, octokit, ctx){
+    .then(rr => rr.data.filter(r => r.prerelease)) // by prereleases
 
-    return octokit.rest.repos.getBranch({
-    
-      owner: ctx.owner,
+  // match the filter
+    .then((prereleases) => {
 
-      repo: ctx.repo,
-
-      branch: branch.replace(/^branch_/, "")
-    
-    }).then((b) => {
-    
-      //
-      // we only use the first 8 chars of the commit's SHA for tagging
-      //
-      return b.data.commit.sha.substring(0, 7) 
+      return prereleases.filter(pr => filter_reg.test(pr.tag_name)) 
 
     })
 
-  }
+    .then(prereleases => __sortReleasesByTime(prereleases)[0]) // order by time (get the latest)
+
+    .then(prerelease => prerelease.tag_name) // get the tag name
+}
+
+function __getReleases(octokit, ctx){
+
+  return octokit.rest.repos.listReleases({
+
+    owner: ctx.owner,
+
+    repo: ctx.repo
+
+  })
+}
+
+function __sortReleasesByTime(releases){
+
+  return releases.sort((a, b) => {
+
+    return Date.parse(a.created_at) <= Date.parse(b.created_at) ?  1 : -1
+
+  })
+
+}
+
+function __last_branch_commit(branch, octokit, ctx){
+
+  return octokit.rest.repos.getBranch({
+
+    owner: ctx.owner,
+
+    repo: ctx.repo,
+
+    branch: branch.replace(/^branch_/, "")
+
+  }).then((b) => {
+
+    //
+    // we only use the first 8 chars of the commit's SHA for tagging
+    //
+    return b.data.commit.sha.substring(0, 7) 
+
+  })
+
+}
