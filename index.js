@@ -42,6 +42,8 @@ async function run(){
 
     current_branch: github.context.ref.replace("refs/heads/", ""),
 
+    base_folder: core.getInput("base_folder"),
+
     images: (type, flavour) => {
 
       return ImagesCalculator({action_type: type, flavour}, ctx)

@@ -74,8 +74,8 @@ module.exports = class {
             env: imagePayload.env,
             image: imagePayload.image,
             service_name,
-            reviewers: imagePayload.reviewers
-
+            reviewers: imagePayload.reviewers,
+            base_folder: this.ctx.base_folder,
           })
 
         })
