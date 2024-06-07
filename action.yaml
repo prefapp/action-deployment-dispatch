@@ -35,7 +35,7 @@ inputs:
     description: "The branch used as a reference for the deployment file"
   base_folder:
     description: "Base folder where the tenants are located in the state repo"
-    default: "apps"
+    default: ""
     required: false
 runs:
   using: 'node12'
