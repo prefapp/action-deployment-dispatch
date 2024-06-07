@@ -18,7 +18,7 @@ jobs:
         run: |
           pwd
           find $GITHUB_WORKSPACE
-          npm i
+          npm i -D
 
       - name: Lint code
         run: npm run lint
@@ -29,6 +29,6 @@ jobs:
       - name: Check if latest code is compiled
         run: |
           mv dist/ dist_old
-          npm run prepare
+          npm run compile
           diff dist dist_old > kk || (echo "ERROR: THE SOURCE CODE AND THE COMPILED FILES /dist DO NOT MATCH" && exit 1)
 
