@@ -12436,8 +12436,8 @@ module.exports = class {
             env: imagePayload.env,
             image: imagePayload.image,
             service_name,
-            reviewers: imagePayload.reviewers
-
+            reviewers: imagePayload.reviewers,
+            base_folder: this.ctx.base_folder,
           })
 
         })
@@ -12906,6 +12906,8 @@ async function run(){
     master_branch: core.getInput("default_branch"),
 
     current_branch: github.context.ref.replace("refs/heads/", ""),
+
+    base_folder: core.getInput("base_folder"),
 
     images: (type, flavour) => {
 
