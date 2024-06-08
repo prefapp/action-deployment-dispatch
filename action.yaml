@@ -34,5 +34,5 @@ inputs:
     default: ${{ github.event.repository.master_branch }}
     description: "The branch used as a reference for the deployment file"
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
