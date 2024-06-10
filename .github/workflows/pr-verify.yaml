@@ -28,5 +28,5 @@ jobs:
       - name: Check if latest code is compiled
         run: |
           mv dist/ dist_old
-          npm run compile
+          npm run prepare
           diff dist dist_old > kk || (echo "ERROR: THE SOURCE CODE AND THE COMPILED FILES /dist DO NOT MATCH" && exit 1)
