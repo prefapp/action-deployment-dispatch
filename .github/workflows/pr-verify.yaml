@@ -16,7 +16,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pwd
           find $GITHUB_WORKSPACE
           npm i -D
 
