@@ -1,9 +1,11 @@
 module.exports = {
-    env: {
-        commonjs: true,
-        es6: true,
-        jest: true,
-        node: true
+    languageOptions: {
+        globals: {
+            commonjs: true,
+            es6: true,
+            jest: true,
+            node: true
+        }
     },
     extends: "eslint:recommended",
     globals: {
@@ -11,7 +13,7 @@ module.exports = {
         "SharedArrayBuffer": "readonly"
     },
     parserOptions: {
-        ecmaVersion: 2018
+        ecmaVersion: 2022
     },
     rules: {
         "no-unused-vars": 1
