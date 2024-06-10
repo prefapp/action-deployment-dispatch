@@ -30,4 +30,3 @@ jobs:
           mv dist/ dist_old
           npm run compile
           diff dist dist_old > kk || (echo "ERROR: THE SOURCE CODE AND THE COMPILED FILES /dist DO NOT MATCH" && exit 1)
-
