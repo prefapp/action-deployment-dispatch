@@ -16,8 +16,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          find $GITHUB_WORKSPACE
-          npm i -D
+          npm ci
 
       - name: Lint code
         run: npm run lint
