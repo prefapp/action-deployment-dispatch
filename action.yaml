@@ -38,5 +38,5 @@ inputs:
     default: ""
     required: false
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: 'node20'
+  main: 'lib/main/index.js'

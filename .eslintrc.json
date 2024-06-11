@@ -5,15 +5,12 @@
         "jest": true,
         "node": true
     },
-    "extends": [
-        "@eslint-recommended"
-    ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
-        "ecmaVersion": 2016
+        "ecmaVersion": 2018
     },
     "rules": {
         "no-unused-vars": 1
