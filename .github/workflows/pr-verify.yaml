@@ -5,8 +5,8 @@ on:
 jobs:
   ci-checks:
     runs-on: ubuntu-22.04
-    env:
-      NODE_OPTIONS: --openssl-legacy-provider
+    # env:
+    #   NODE_OPTIONS: --openssl-legacy-provider
     steps:
       - name: Checkout
         uses: actions/checkout@v4
