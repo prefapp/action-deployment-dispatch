@@ -1,0 +1,56 @@
+name: Build and Retag
+
+on:
+  push:
+    tags: 
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm i -D
+
+    - name: Build
+      run: npm run build
+
+    - name: Commit and retag
+      id: commit_and_retag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        DIST_FOLDER="dist"
+
+        # Check if there are changes to commit
+        if [[ `git status $DIST_FOLDER --porcelain` ]]; then
+          # Commit and push if there are changes
+          git status
+
+          git add $DIST_FOLDER
+          
+          git commit -m "Build artifacts"
+          git tag -f "$TAG_NAME"
+          echo "diff_found=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "No changes to commit"
+          echo "diff_found=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      if: ${{ steps.commit_and_retag.outputs.diff_found == true || steps.commit_and_retag.outputs.diff_found == 'true' }}
+      with:
+        force: true
+        tags: true
