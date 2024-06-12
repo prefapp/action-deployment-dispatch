@@ -2,14 +2,23 @@ const github = require("@actions/github")
 
 module.exports = async function({action_type, flavour="default"}, ctx){
 
-  const image = await __calculateImage(action_type, ctx)
+  try{
 
-  if(flavour){
-    return `${image}_${flavour}`
+    const image = await __calculateImage(action_type, ctx)
+
+    if(flavour){
+      return `${image}_${flavour}`
+    }
+    else{
+      return image
+    }
+
   }
-  else{
-    return image
+  catch(err){
+
+    throw `Calculating image: ${err}: ${err.stack}`
   }
+
 
 }
 
@@ -48,6 +57,10 @@ module.exports = async function({action_type, flavour="default"}, ctx){
  
       return r.data.tag_name
 
+    }).catch((err) => {
+
+      throw `calculating last release: ${err}`
+
     })
     
   }
@@ -69,6 +82,11 @@ module.exports = async function({action_type, flavour="default"}, ctx){
       if( r ) return r.tag_name
 
       return null
+
+    }).catch((err) => {
+
+      throw `calculating last pre-release: ${err}`
+
     })
     
   }
@@ -89,6 +107,10 @@ module.exports = async function({action_type, flavour="default"}, ctx){
       // we only use the first 8 chars of the commit's SHA for tagging
       //
       return b.data.commit.sha.substring(0, 7) 
+
+    }).catch((err) => {
+
+      throw `calculating last commit on branch ${branch}: ${err}`
 
     })
 

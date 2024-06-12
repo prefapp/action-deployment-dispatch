@@ -7,13 +7,15 @@ const github = require("@actions/github")
 
 module.exports = class {
 
-  constructor({actions, test = false, ctx}){
+  constructor({actions, test = false, ctx, ensemble = true}){
 
     this.actions = actions
 
     this.ctx = ctx
 
     this.__onTest = test
+
+    this.__onEnsemble = ensemble
 
     this.__dispatcher = (test) ? 
       
@@ -30,6 +32,64 @@ module.exports = class {
   //
   async dispatch(){
 
+    if(this.__onEnsemble)
+      await this.__ensembleDispatch()
+    else
+      await this.__individualDispach()
+
+  }
+
+  async __ensembleDispatch(){
+
+    const payload = []
+
+    for( const action of this.actions ){
+
+      const deploymentEvent = await this.__preparePayload(action)
+
+      core.info(JSON.stringify(deploymentEvent, null, 4))
+
+      payload.push(deploymentEvent)
+
+    }
+
+    const expanded_payload = this.__expandPayload(payload)
+
+    await this.__dispatchEvent({images: expanded_payload, version: 4})
+
+  }
+
+    __expandPayload(payload){
+
+      const expanded = []
+
+      payload.forEach((imagePayload) => {
+
+        imagePayload.service_names.forEach((service_name) => {
+
+          expanded.push({
+
+            tenant: imagePayload.tenant,
+            app: imagePayload.app,
+            env: imagePayload.env,
+            image: imagePayload.image,
+            service_name,
+            reviewers: imagePayload.reviewers,
+            base_folder: this.ctx.base_folder,
+          })
+
+        })
+
+      })
+
+      return expanded
+    }
+
+  async __individualDispach(){
+
+    // waitTime differs according to the context (test or production)
+    const waitTime = this.__onTest ? 0.5 : 10
+
     core.info(JSON.stringify(this.actions, null, 4))
 
     for( const action of this.actions ){
@@ -40,7 +100,7 @@ module.exports = class {
 
       await this.__dispatchEvent(deploymentEvent)
 
-      await this.__wait(10) // 10 seg
+      await this.__wait(waitTime) 
 
     }
   }
@@ -89,6 +149,7 @@ class DispatcherGithub{
   async dispatch(eventPayload){
 
     try {
+
 
       core.info(JSON.stringify({
       
