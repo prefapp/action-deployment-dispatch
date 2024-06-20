@@ -1,3 +1,5 @@
+const github = require('@actions/github');
+
 const jsYaml = require("js-yaml")
 
 const DYNAMIC_VERSIONS = ["last_prerelease", "last_release"]
@@ -18,7 +20,9 @@ module.exports = class {
 
       repo: ctx.repo,
 
-      path: `${ctx.deployment_file}`
+      path: `${ctx.deployment_file}`,
+
+      ref: github.context.ref, 
     
     }).then(({data}) => {
  
