@@ -1,5 +1,3 @@
-const github = require('@actions/github');
-
 const jsYaml = require("js-yaml")
 
 const DYNAMIC_VERSIONS = ["last_prerelease", "last_release"]
