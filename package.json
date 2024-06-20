@@ -1,6 +1,6 @@
 {
   "name": "action-deployment-dispatch",
-  "version": "1.0.0",
+  "version": "4.1.0",
   "description": "A github action for deployments dispatch to a gitops repo",
   "main": "index.js",
   "directories": {
